@@ -17,6 +17,13 @@
 
 ⚠️ 새로 배포해서 URL이 바뀌었다면
    assets/config.js 파일의 GAS_URL 값을 새 주소로 바꿔주세요.
+   그때 const GAS_URL 줄은 반드시 "하나만" 살아 있어야 합니다.
+   두 줄이면 사이트 전체가 멈춥니다.
+
+⚠️ 일지와 계약서는 반드시 "같은 프로젝트 한 곳"에 있어야 합니다.
+   계약서만 있는 새 프로젝트로 배포하면 일지 제출이 실패합니다.
+   (일지 payload에는 type 필드가 없어 saveJournal로 넘어가는데,
+    그 함수가 없는 프로젝트이기 때문입니다.)
 
 -------------------------------------------------------------------------
 여기서부터 복사
@@ -25,42 +32,81 @@
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
+
+    // 계약서는 type 필드로 구분합니다. 일지에는 이 필드가 없습니다.
     if (data.type === "contract") return saveContract(data);
-    return saveJournal(data);   // 기존 함수
+
+    // 일지는 기존 함수가 처리합니다.
+    // 이 프로젝트에 일지 저장 함수가 없으면 원인을 분명히 알려줍니다.
+    if (typeof saveJournal !== "function") {
+      return jsonOut({
+        status: "error",
+        message: "이 앱스스크립트에는 일지 저장 함수(saveJournal)가 없습니다. " +
+                 "일지를 받던 프로젝트에 계약서 코드를 추가해 한 곳에서 처리하세요."
+      });
+    }
+    return saveJournal(data);   // 기존 함수 (이름이 다르면 여기를 실제 이름으로 고치세요)
+
   } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "error", message: String(err) }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return jsonOut({ status: "error", message: String(err) });
   }
 }
 
-function saveContract(d) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sh = ss.getSheetByName("계약서");
-  if (!sh) {
-    sh = ss.insertSheet("계약서");
-    sh.appendRow(["제출시각","번호","이름","작품제목","장르","로그라인",
-                  "선택하는것","바뀌는것","나의질문",
-                  "씬","엔딩","배경","캐릭터","분",
-                  "캐릭터목록","엔딩목록","동의"]);
-  }
-  // 같은 번호가 이미 냈으면 그 행을 지우고 새로 넣음 (재제출 허용)
-  const vals = sh.getDataRange().getValues();
-  for (let i = vals.length - 1; i >= 1; i--) {
-    if (String(vals[i][1]) === String(d.studentNumber)) sh.deleteRow(i + 1);
-  }
-  sh.appendRow([
-    new Date(), d.studentNumber, d.studentName, d.title, d.genre, d.logline,
-    d.qChoose, d.qChange, d.myQuestion,
-    d.scope.scenes, d.scope.endings, d.scope.backgrounds,
-    d.scope.characters, d.scope.minutes,
-    d.characters.map(c => `${c.name}|${c.role}|${c.personality}`).join("\n"),
-    d.endings.map(x => `${x.label}|${x.name}|${x.condition}`).join("\n"),
-    d.agreed ? "O" : "X"
-  ]);
+function jsonOut(obj) {
   return ContentService
-    .createTextOutput(JSON.stringify({ status: "success" }))
+    .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function saveContract(d) {
+  // 20~30명이 거의 동시에 제출하면 '읽기 → 삭제 → 추가'가 서로 뒤엉켜
+  // 다른 학생의 행이 지워질 수 있습니다. 한 번에 한 명씩 처리되도록 잠급니다.
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+  } catch (e) {
+    return jsonOut({ status: "error",
+                     message: "다른 학생의 제출을 처리하는 중입니다. 잠시 후 다시 눌러주세요." });
+  }
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const before = ss.getActiveSheet();   // 새 시트를 만들면 '활성 시트'가 바뀌므로 기억해 둡니다
+
+    let sh = ss.getSheetByName("계약서");
+    if (!sh) {
+      sh = ss.insertSheet("계약서");
+      sh.appendRow(["제출시각","번호","이름","작품제목","장르","로그라인",
+                    "선택하는것","바뀌는것","나의질문",
+                    "씬","엔딩","배경","캐릭터","분",
+                    "캐릭터목록","엔딩목록","동의"]);
+      // 기존 일지 저장이 getActiveSheet()를 쓰더라도 일지가 계약서 시트로
+      // 잘못 들어가지 않도록 활성 시트를 되돌립니다.
+      ss.setActiveSheet(before);
+    }
+
+    // 같은 번호가 이미 냈으면 그 행을 지우고 새로 넣음 (재제출 허용)
+    const vals = sh.getDataRange().getValues();
+    for (let i = vals.length - 1; i >= 1; i--) {
+      if (String(vals[i][1]) === String(d.studentNumber)) sh.deleteRow(i + 1);
+    }
+
+    sh.appendRow([
+      new Date(), d.studentNumber, d.studentName, d.title, d.genre, d.logline,
+      d.qChoose, d.qChange, d.myQuestion,
+      d.scope.scenes, d.scope.endings, d.scope.backgrounds,
+      d.scope.characters, d.scope.minutes,
+      d.characters.map(c => `${c.name}|${c.role}|${c.personality}`).join("\n"),
+      d.endings.map(x => `${x.label}|${x.name}|${x.condition}`).join("\n"),
+      d.agreed ? "O" : "X"
+    ]);
+
+    SpreadsheetApp.flush();
+    return jsonOut({ status: "success" });
+
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 -------------------------------------------------------------------------

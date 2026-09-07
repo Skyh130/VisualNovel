@@ -664,19 +664,28 @@
         result = JSON.parse(text);
       } catch (parseErr) {
         // JSON이 아니라 로그인 페이지 HTML이 온 경우 = 배포 권한 문제
-        throw new Error("PERMISSION");
+        var pe = new Error("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.");
+        pe.kind = "permission";
+        throw pe;
       }
 
       if (result.status === "success") {
         showDone(payload);
       } else {
-        throw new Error(result.message || "서버가 오류를 돌려주었습니다.");
+        // 앱스스크립트가 돌려준 오류 내용을 그대로 보여줍니다
+        // (예: "다른 학생의 제출을 처리하는 중입니다. 잠시 후 다시 눌러주세요.")
+        var se = new Error(result.message || "서버가 오류를 돌려주었습니다.");
+        se.kind = "server";
+        throw se;
       }
     } catch (err) {
       statusMsg.className = "status-msg status-warn";
-      if (err && err.message === "PERMISSION") {
+      if (err && err.kind === "permission") {
         statusMsg.textContent = "⚠️ 서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.";
         alert("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else if (err && err.kind === "server") {
+        statusMsg.textContent = "⚠️ " + err.message;
+        alert(err.message + "\n\n(작성한 내용은 그대로 남아 있습니다.)");
       } else {
         statusMsg.textContent = "⚠️ 저장에 실패했습니다. 인터넷 연결을 확인하고 다시 눌러주세요.";
         alert("제출 중 문제가 발생했습니다. 작성한 내용은 그대로 남아 있으니 다시 시도해 주세요.");
