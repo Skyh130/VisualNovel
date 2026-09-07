@@ -397,8 +397,10 @@
 
 <script src="./assets/config.js"></script>
 <script>
-  // 🔴 1단계에서 복사한 구글 앱스 스크립트 웹 앱 배포 URL을 여기에 넣어주세요!
-  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+  // 🔴 구글 앱스 스크립트 웹 앱 배포 URL은 assets/config.js 의 GAS_URL 한 곳에서 관리합니다.
+  //     주소가 바뀌면 config.js 만 고치면 일지와 계약서가 함께 반영됩니다.
+  //     (config.js를 못 불러온 경우에도 페이지가 멈추지 않도록 대비합니다)
+  const GAS_WEB_APP_URL = (typeof GAS_URL !== "undefined") ? GAS_URL : "";
 
   // 오늘 날짜 기본 지정 및 미래 날짜 입력 방지
   const dateInput = document.getElementById("date");
@@ -434,8 +436,8 @@
   document.getElementById("journalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    if (GAS_WEB_APP_URL.includes("여기에_")) {
-      alert("Apps Script 배포 URL을 상단 GAS_WEB_APP_URL에 먼저 입력해 주세요!");
+    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("여기에_")) {
+      alert("Apps Script 배포 URL을 불러오지 못했습니다. assets/config.js 의 GAS_URL을 확인해 주세요!");
       return;
     }
 
