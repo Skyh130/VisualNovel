@@ -60,6 +60,21 @@
   .cs-item li { margin-bottom: 6px; font-size: .92rem; }
   .cs-item[hidden] { display: none; }
 
+  /* 넓은 화면에서는 코드와 설명을 나란히 놓아 한 화면에 더 많이 보이게 합니다.
+     (코딩하면서 보는 페이지라 스크롤이 짧을수록 좋습니다) */
+  @media (min-width: 1000px) {
+    .cs-item.cs-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      column-gap: 22px;
+      align-items: start;
+    }
+    .cs-item.cs-split > h3 { grid-column: 1 / -1; }
+    /* 2열일 때는 복사 버튼을 코드 아래로 (코드 위에 빈 줄이 생기지 않게) */
+    .cs-item.cs-split > .code-block { margin-bottom: 0; flex-direction: column; }
+    .cs-item.cs-split > ul { margin-top: 0; }
+  }
+
   .cs-empty {
     display: none;
     text-align: center;
@@ -111,7 +126,7 @@
   <div id="csList">
 
     <!-- 1 -->
-    <section class="cs-item">
+    <section class="cs-item cs-split">
       <h3>1. 기본 뼈대</h3>
       <div class="code-block">
 <pre class="code">define y = Character("유나", color="#f0a0a0")
@@ -133,7 +148,7 @@ label start:
     </section>
 
     <!-- 2 -->
-    <section class="cs-item">
+    <section class="cs-item cs-split">
       <h3>2. 화면 연출</h3>
       <div class="code-block">
 <pre class="code">scene bg_school with fade
@@ -152,7 +167,7 @@ pause 1.0</pre>
     </section>
 
     <!-- 3 -->
-    <section class="cs-item">
+    <section class="cs-item cs-split">
       <h3>3. 선택지와 분기</h3>
       <div class="code-block">
 <pre class="code">menu:
@@ -171,7 +186,7 @@ pause 1.0</pre>
     </section>
 
     <!-- 4 -->
-    <section class="cs-item">
+    <section class="cs-item cs-split">
       <h3>4. 변수와 조건 분기</h3>
       <div class="code-block">
 <pre class="code">default affection = 0
@@ -193,7 +208,7 @@ else:
     </section>
 
     <!-- 5 -->
-    <section class="cs-item">
+    <section class="cs-item cs-split">
       <h3>5. 사운드</h3>
       <div class="code-block">
 <pre class="code">play music "bgm.ogg" fadein 1.0
@@ -209,7 +224,7 @@ stop music fadeout 1.0</pre>
     </section>
 
     <!-- 6 -->
-    <section class="cs-item">
+    <section class="cs-item cs-split">
       <h3>6. 디버깅 (혼자 문제를 찾는 법)</h3>
       <div class="code-block">
 <pre class="code">$ renpy.notify(str(affection))</pre>

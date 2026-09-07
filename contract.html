@@ -21,6 +21,15 @@
     border-bottom: 1px dashed var(--border-soft);
   }
   .scope-row:last-of-type { border-bottom: none; }
+  @media (min-width: 900px) {
+    /* 넓은 화면에서는 두 줄씩 나란히 — 위아래로 길어지지 않게 */
+    #scopeTable {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 28px;
+    }
+    .scope-row:nth-last-of-type(2) { border-bottom: none; }
+  }
   .scope-name { font-weight: 700; color: var(--point-brown); font-size: .95rem; }
   .scope-max  { display: block; font-weight: 400; color: var(--text-muted); font-size: .82rem; }
   .scope-input-wrap { display: flex; align-items: center; gap: 6px; }
@@ -88,6 +97,11 @@
   }
   .repeat-fields label { font-size: .82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px; }
 
+  @media (min-width: 900px) {
+    /* 컴퓨터에서 길게 쓰는 칸은 조금 더 높게 */
+    #logline, #myQuestion { min-height: 96px; }
+  }
+
   /* 제출 완료 화면 */
   #doneCard { display: none; }
   #doneCard.show { display: block; }
@@ -132,16 +146,18 @@
     <section class="section">
       <h2 class="section-title">🎬 1. 작품 정보</h2>
 
-      <div class="field">
-        <label for="title">작품 제목</label>
-        <input type="text" id="title" name="title" aria-label="작품 제목" placeholder="예: 세 번째 화요일" required>
-        <p class="error-msg" id="err_title">작품 제목을 적어주세요. 가제여도 괜찮습니다.</p>
-      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="title">작품 제목</label>
+          <input type="text" id="title" name="title" aria-label="작품 제목" placeholder="예: 세 번째 화요일" required>
+          <p class="error-msg" id="err_title">작품 제목을 적어주세요. 가제여도 괜찮습니다.</p>
+        </div>
 
-      <div class="field">
-        <label for="genre">장르 · 분위기</label>
-        <input type="text" id="genre" name="genre" aria-label="장르와 분위기" placeholder="예: 학원 드라마 / 잔잔하고 조금 쓸쓸한" required>
-        <p class="error-msg" id="err_genre">장르와 분위기를 적어주세요.</p>
+        <div class="field">
+          <label for="genre">장르 · 분위기</label>
+          <input type="text" id="genre" name="genre" aria-label="장르와 분위기" placeholder="예: 학원 드라마 / 잔잔하고 조금 쓸쓸한" required>
+          <p class="error-msg" id="err_genre">장르와 분위기를 적어주세요.</p>
+        </div>
       </div>
 
       <div class="field">
@@ -156,16 +172,18 @@
     <section class="section">
       <h2 class="section-title">🔑 2. 핵심 질문</h2>
 
-      <div class="field">
-        <label for="qChoose">플레이어는 무엇을 선택하는가?</label>
-        <textarea id="qChoose" name="qChoose" aria-label="플레이어는 무엇을 선택하는가" placeholder="예: 그날의 순간에 개입할지, 그대로 둘지를 선택한다." required></textarea>
-        <p class="error-msg" id="err_qChoose">플레이어가 무엇을 선택하는지 적어주세요.</p>
-      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="qChoose">플레이어는 무엇을 선택하는가?</label>
+          <textarea id="qChoose" name="qChoose" aria-label="플레이어는 무엇을 선택하는가" placeholder="예: 그날의 순간에 개입할지, 그대로 둘지를 선택한다." required></textarea>
+          <p class="error-msg" id="err_qChoose">플레이어가 무엇을 선택하는지 적어주세요.</p>
+        </div>
 
-      <div class="field">
-        <label for="qChange">그 선택은 무엇을 바꾸는가?</label>
-        <textarea id="qChange" name="qChange" aria-label="그 선택은 무엇을 바꾸는가" placeholder="예: 친구와의 관계, 그리고 주인공이 자기 자신을 보는 방식이 달라진다." required></textarea>
-        <p class="error-msg" id="err_qChange">그 선택이 무엇을 바꾸는지 적어주세요.</p>
+        <div class="field">
+          <label for="qChange">그 선택은 무엇을 바꾸는가?</label>
+          <textarea id="qChange" name="qChange" aria-label="그 선택은 무엇을 바꾸는가" placeholder="예: 친구와의 관계, 그리고 주인공이 자기 자신을 보는 방식이 달라진다." required></textarea>
+          <p class="error-msg" id="err_qChange">그 선택이 무엇을 바꾸는지 적어주세요.</p>
+        </div>
       </div>
     </section>
 

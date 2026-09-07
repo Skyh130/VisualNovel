@@ -26,9 +26,16 @@
   --accent-dark:  #4b89c7;
   --accent-ink:   #2f6295;          /* 작은 흰 글씨를 얹을 때 쓰는 진한 파랑 */
 
+  /* 본문 최대 폭 — 큰 모니터에서는 아래 미디어쿼리로 넓어집니다 */
+  --page-max: 980px;
+
   --ok:      #2e7d32;
   --warn:    #c62828;
   --warn-bg: #fff1f0;
+}
+
+@media (min-width: 1200px) {
+  :root { --page-max: 1140px; }
 }
 
 * { box-sizing: border-box; }
@@ -54,7 +61,7 @@ img, svg, table { max-width: 100%; }
 /* ---------- 카드(본문 컨테이너) ---------- */
 .container {
   position: relative;
-  max-width: 980px;
+  max-width: var(--page-max);
   margin: 0 auto;
   background: var(--card-white);
   border: 3px solid #f2e9dc;
@@ -124,7 +131,7 @@ a { color: var(--accent-ink); }
 strong { color: #5c4634; }
 
 /* ---------- 사이트 제목 (모든 페이지 공통) ---------- */
-#siteTop { max-width: 980px; margin: 0 auto 14px; }
+#siteTop { max-width: var(--page-max); margin: 0 auto 14px; }
 
 .site-header {
   text-align: center;
@@ -601,6 +608,13 @@ code.inline {
 }
 @media (min-width: 560px) { .grid.g2 { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 721px) { .grid.g3 { grid-template-columns: repeat(3, 1fr); } }
+/* 좁으면 1열 → 넓으면 2열 → 아주 넓으면 3열 */
+@media (min-width: 560px)  { .grid.g23 { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .grid.g23 { grid-template-columns: repeat(3, 1fr); } }
+
+/* 짧은 입력칸 두 개를 나란히 (좁은 화면에서는 위아래) */
+.field-row { display: grid; grid-template-columns: 1fr; gap: 0 18px; }
+@media (min-width: 900px) { .field-row { grid-template-columns: 1fr 1fr; } }
 
 .pill {
   display: inline-block;
