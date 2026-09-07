@@ -3,13 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏠 Ren'Py 비주얼 노벨 제작 프로젝트</title>
+<title>🏠 2026 응용 프로그래밍 개발</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="./assets/style.css">
 <style>
+  /* 사이트 제목 — 다른 페이지의 header-wrap과 같은 말투 */
+  .site-header {
+    max-width: 980px;
+    margin: 0 auto 12px;
+    text-align: center;
+  }
+  .site-header h1 {
+    font-size: 1.9rem;
+    margin: 0 0 2px;
+    line-height: 1.25;
+    word-break: keep-all;      /* '개발'처럼 낱말 중간에서 끊기지 않게 */
+  }
+  .site-header .sub-title {
+    margin-bottom: 0;
+    font-size: .88rem;
+    line-height: 1.5;
+    word-break: keep-all;
+    padding: 0 6px;
+  }
+  @media (min-width: 721px) {
+    .site-header { margin-bottom: 18px; }
+    .site-header h1 { font-size: 2.8rem; }
+    .site-header .sub-title { font-size: 1rem; }
+  }
+
   /* 첫 화면에 '이번 주 할 일'이 스크롤 없이 보이도록 만든 히어로 카드 */
   .hero {
     max-width: 980px;
@@ -41,10 +66,16 @@
     border-radius: 16px;
   }
   .hero-date { color: var(--text-muted); font-size: .86rem; font-weight: 600; }
-  .hero h1 {
+  .hero-title {
+    font-family: 'Gamja Flower', cursive;
+    color: var(--point-brown);
     font-size: 1.6rem;
     margin: 0 0 6px;
     line-height: 1.3;
+    border: none;
+    padding: 0;
+    word-break: keep-all;      /* '캐릭터'가 잘리지 않게 */
+    overflow-wrap: break-word;
   }
   .hero-goal {
     font-size: .93rem;
@@ -95,7 +126,7 @@
   }
   @media (min-width: 721px) {
     .hero { padding: 26px 30px 24px; }
-    .hero h1 { font-size: 2.2rem; }
+    .hero-title { font-size: 2.2rem; }
     .hero-cta { display: inline-block; width: auto; padding: 14px 40px; }
     .hero-nav { justify-content: flex-start; }
     .hero-nav button { flex: 0 0 auto; padding: 0 22px; }
@@ -163,6 +194,12 @@
 
 <nav id="siteNav" data-page="index"></nav>
 
+<!-- ===== 사이트 제목 ===== -->
+<header class="site-header">
+  <h1>2026 응용 프로그래밍 개발</h1>
+  <p class="sub-title">Ren'Py를 활용한 비쥬얼 노벨 게임 제작 프로젝트</p>
+</header>
+
 <!-- ===== 이번 주 (첫 화면) ===== -->
 <section class="hero" aria-labelledby="heroTitle">
   <div class="hero-top">
@@ -170,7 +207,7 @@
     <span class="round-pill" id="roundPill">–</span>
     <span class="hero-date" id="roundDate"></span>
   </div>
-  <h1 id="heroTitle">불러오는 중…</h1>
+  <h2 class="hero-title" id="heroTitle">불러오는 중…</h2>
   <p class="hero-goal" id="roundGoal"></p>
   <a class="hero-cta" id="heroCta" href="./journal.html">이번 주 제출물 보러 가기 →</a>
   <div class="hero-nav">
