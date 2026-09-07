@@ -436,7 +436,7 @@
   document.getElementById("journalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("여기에_")) {
+    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec")) {
       alert("Apps Script 배포 URL을 불러오지 못했습니다. assets/config.js 의 GAS_URL을 확인해 주세요!");
       return;
     }
