@@ -476,7 +476,18 @@
         body: JSON.stringify(payload)
       });
       
-      const result = await res.json();
+      // 응답을 먼저 글자로 받아서 JSON인지 확인합니다.
+      // JSON이 아니면 구글 로그인 페이지 HTML이 온 것이라 '배포 권한' 문제입니다.
+      const text = await res.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseErr) {
+        const e = new Error("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.");
+        e.kind = "permission";
+        throw e;
+      }
+
       if (result.status === "success") {
         statusMsg.style.color = "#2e7d32";
         statusMsg.textContent = "✨ 시트에 성공적으로 저장되었습니다!";
@@ -486,13 +497,24 @@
         document.getElementById("journalForm").reset();
         dateInput.value = today;
       } else {
-        throw new Error(result.message || "오류 발생");
+        // 앱스스크립트가 돌려준 오류 내용을 그대로 보여줍니다 (원인 파악용)
+        const e = new Error(result.message || "서버가 오류를 돌려주었습니다.");
+        e.kind = "server";
+        throw e;
       }
     } catch (err) {
       console.error(err);
       statusMsg.style.color = "#c62828";
-      statusMsg.textContent = "⚠️ 저장에 실패했습니다. 네트워크를 확인해 주세요.";
-      alert("제출 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      if (err.kind === "permission") {
+        statusMsg.textContent = "⚠️ 서버 접근 권한 문제입니다.";
+        alert("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else if (err.kind === "server") {
+        statusMsg.textContent = "⚠️ 서버 오류 — " + err.message;
+        alert("서버에서 아래 오류가 돌아왔습니다.\n이 문구를 선생님께 그대로 알려주세요.\n\n" + err.message + "\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else {
+        statusMsg.textContent = "⚠️ 저장에 실패했습니다. 인터넷 연결을 확인해 주세요.";
+        alert("제출 중 문제가 발생했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      }
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = "웹페이지 제출하기 (Submit) ✈️";
