@@ -229,6 +229,24 @@ strong { color: #5c4634; }
   font-size: .93rem;
   white-space: nowrap;
 }
+
+/* 일지의 '회차 선택 / 날짜 선택' 라벨이 '회 / 차 선택'처럼 쪼개지지 않게 합니다.
+   (journal.html의 인라인 CSS는 white-space를 정하지 않으므로 이 규칙이 적용됩니다) */
+.select-item > span { white-space: nowrap; }
+/* 이 안의 select/input은 위쪽 공통 규칙의 width:100%를 그대로 받으면
+   라벨 옆자리를 다 차지해 줄이 밀립니다. 내용 크기에 맞추되,
+   아주 좁은 화면에서는 입력칸이 줄어들어 라벨과 같은 줄에 남게 합니다. */
+.select-item select,
+.select-item input {
+  width: auto;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+/* 360px보다 좁은 화면에서만 입력칸이 라벨 아래로 내려갑니다.
+   (날짜 입력칸은 이보다 더 줄어들지 않아 가로 스크롤이 생기기 때문) */
+@media (max-width: 359px) {
+  .select-item { flex-wrap: wrap; }
+}
 .info-input-wrap input {
   border: none;
   background: transparent;
