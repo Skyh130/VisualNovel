@@ -12,7 +12,8 @@
    - ⚠️ 배포할 때 '액세스 권한: 모든 사용자'로 배포해야 합니다.
         학교 도메인으로 제한하면 학생 전원이 제출에 실패합니다.
    --------------------------------------------------------- */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+//const GAS_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxoTwrA9ZIojwOGRxn9kKehqLzpwTyUi_fzYadUNVYJbTiBbqkCVE0xkm7L9xiTRcZM/exec";
 
 /* ---------------------------------------------------------
    2) 패들렛 주소
@@ -21,9 +22,9 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaL
      눌리지 않습니다. 주소를 넣으면 자동으로 살아납니다.
    --------------------------------------------------------- */
 const LINKS = {
-  padletMid:   "",   // 4회차 중간발표
-  padletTest:  "",   // 9회차 플레이테스트
-  padletFinal: "",   // 11회차 최종 전시
+  padletMid:   "https://padlet.com/ds3cyz1/2026-2-d5q9x1tnxb97rjdd",   // 4회차 중간발표
+  padletTest:  "https://padlet.com/ds3cyz1/2026-2-d5q9x1tnxb97rjdd",   // 9회차 플레이테스트
+  padletFinal: "https://padlet.com/ds3cyz1/2026-2-d5q9x1tnxb97rjdd",   // 11회차 최종 전시
 };
 
 /* ---------------------------------------------------------
