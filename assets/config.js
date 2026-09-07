@@ -88,19 +88,54 @@ const SCOPE_LIMITS = {
    (여러 페이지가 함께 쓰는 작은 도구 함수들입니다)
    ========================================================= */
 
-/* 오늘 기준 현재 회차 번호를 돌려줍니다.
-   - 1회차 시작 전이면 0
-   - 마지막 회차 날짜를 지나면 ROUND_DATES.length (= 종료)
-   - 그 외에는 1 ~ 11                                        */
+/* 오늘이 속한 "주"(월요일~일요일)에 들어 있는 회차 번호를 돌려줍니다.
+   수업이 화요일이라, 월요일에 보아도 그 주의 수업이 '이번 주'로 나옵니다.
+   수업이 끝난 수요일~일요일에도 같은 회차가 계속 '이번 주'로 남습니다.
+
+   - 1회차가 있는 주가 되기 전이면 0        (= 아직 시작 전)
+   - 마지막 회차가 있는 주를 지나면 길이+1  (= 프로젝트 종료)
+   - 이번 주에 수업이 없으면 다음에 올 회차를 돌려줍니다.
+   - 그 외에는 1 ~ 11                                          */
 function getCurrentRound(todayStr) {
   const today = todayStr || new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
-  if (today < ROUND_DATES[0]) return 0;                          // 아직 시작 전
-  if (today > ROUND_DATES[ROUND_DATES.length - 1]) {             // 마지막 회차도 지남
-    return ROUND_DATES.length + 1;                               // = 프로젝트 종료
+  const week = getWeekRange(today);
+
+  // ① 이번 주 안에 수업이 있으면 그 회차
+  for (let i = 0; i < ROUND_DATES.length; i++) {
+    if (ROUND_DATES[i] >= week.monday && ROUND_DATES[i] <= week.sunday) return i + 1;
   }
-  let idx = 0;
-  ROUND_DATES.forEach((d, i) => { if (today >= d) idx = i; });
-  return idx + 1;
+  // ② 첫 회차가 있는 주보다 앞이면 '아직 시작 전'
+  if (week.sunday < ROUND_DATES[0]) return 0;
+  // ③ 마지막 회차가 있는 주보다 뒤면 '프로젝트 종료'
+  if (week.monday > ROUND_DATES[ROUND_DATES.length - 1]) return ROUND_DATES.length + 1;
+  // ④ 중간에 수업 없는 주(시험 주 등) — 다음에 올 회차를 보여줍니다
+  for (let i = 0; i < ROUND_DATES.length; i++) {
+    if (ROUND_DATES[i] > week.sunday) return i + 1;
+  }
+  return ROUND_DATES.length;
+}
+
+/* 어떤 날짜가 속한 주의 월요일과 일요일을 YYYY-MM-DD로 돌려줍니다. */
+function getWeekRange(todayStr) {
+  const p = todayStr.split("-").map(Number);
+  const d = new Date(p[0], p[1] - 1, p[2]);
+  const dow = d.getDay();                       // 0=일요일, 1=월요일 …
+  const toMonday = (dow === 0) ? -6 : 1 - dow;  // 일요일은 그 주의 마지막 날로 봅니다
+  const mon = new Date(d.getFullYear(), d.getMonth(), d.getDate() + toMonday);
+  const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+  const fmt = function (x) {
+    return x.getFullYear() + "-" +
+           String(x.getMonth() + 1).padStart(2, "0") + "-" +
+           String(x.getDate()).padStart(2, "0");
+  };
+  return { monday: fmt(mon), sunday: fmt(sun) };
+}
+
+/* 이번 주에 실제로 수업이 있는지 (index/schedule의 안내 문구용) */
+function hasClassThisWeek(todayStr) {
+  const today = todayStr || new Date().toLocaleDateString("sv-SE");
+  const week = getWeekRange(today);
+  return ROUND_DATES.some(function (d) { return d >= week.monday && d <= week.sunday; });
 }
 
 /* 사이트 제목과 공통 내비게이션을 함께 그려줍니다.

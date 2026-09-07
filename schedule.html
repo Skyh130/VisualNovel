@@ -212,8 +212,12 @@
     line.textContent = "🌱 9월 1일 시작 — 아직 프로젝트가 시작되지 않았습니다.";
   } else if (todayRound > total) {
     line.textContent = "🌸 프로젝트 종료 — 11회차까지 모두 끝났습니다.";
+  } else if (!hasClassThisWeek()) {
+    line.textContent = "📍 이번 주에는 수업이 없습니다 · 다음 수업 " +
+                       prettyDate(ROUND_DATES[todayRound - 1]) + " " + todayRound + "회차";
   } else {
-    line.textContent = "📍 오늘은 " + todayRound + "회차입니다 · " + ROUNDS[todayRound - 1].title;
+    line.textContent = "📍 이번 주는 " + todayRound + "회차입니다 · " +
+                       prettyDate(ROUND_DATES[todayRound - 1]) + " · " + ROUNDS[todayRound - 1].title;
   }
 
   /* 단계 범례 */

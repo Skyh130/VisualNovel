@@ -331,9 +331,11 @@
     } else if (todayRound > total) {
       note = "프로젝트 종료 — 11회차까지 모두 끝났습니다. 수고 많았습니다! 🌸";
     } else if (viewing !== todayRound) {
-      note = "지금 " + viewing + "회차를 보고 있습니다. 오늘은 " + todayRound + "회차입니다.";
+      note = "지금 " + viewing + "회차를 보고 있습니다. 이번 주는 " + todayRound + "회차입니다.";
+    } else if (!hasClassThisWeek()) {
+      note = "이번 주에는 수업이 없습니다. 다음 수업은 " + prettyDate(ROUND_DATES[todayRound - 1]) + "입니다.";
     } else {
-      note = "오늘은 " + todayRound + "회차입니다.";
+      note = "이번 주 수업은 " + prettyDate(ROUND_DATES[todayRound - 1]) + "입니다.";
     }
     $("peekNote").textContent = note;
 
