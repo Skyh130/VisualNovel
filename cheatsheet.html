@@ -58,7 +58,10 @@
   .cs-item > h3 { margin-top: 0; }
   .cs-item ul { margin: 10px 0 0; padding-left: 20px; }
   .cs-item li { margin-bottom: 6px; font-size: .92rem; }
-  .cs-item[hidden] { display: none; }
+  /* 2열 레이아웃(.cs-split)의 display:grid가 이 규칙을 덮어써서
+     넓은 화면에서 검색 필터가 먹지 않았습니다. !important로 못 박습니다. */
+  .cs-item[hidden],
+  .cs-group[hidden] { display: none !important; }
 
   /* 넓은 화면에서는 코드와 설명을 나란히 놓아 한 화면에 더 많이 보이게 합니다.
      (코딩하면서 보는 페이지라 스크롤이 짧을수록 좋습니다) */
@@ -95,6 +98,57 @@
   }
   .err-card b { display: block; color: #a14c30; font-size: 1rem; margin-bottom: 4px; }
   .err-card p { margin: 0; font-size: .92rem; }
+
+  /* 검색어 강조 — 찾은 낱말에 바로 눈이 가도록 */
+  mark.hit {
+    background: #ffe98a;
+    color: #4a3b00;
+    border-radius: 4px;
+    padding: 0 2px;
+    font-weight: 700;
+  }
+
+  /* 항목 머리에 붙는 분류 칩 */
+  .cs-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: .74rem;
+    font-weight: 700;
+    vertical-align: middle;
+    background: var(--pastel-blue);
+    color: #285e94;
+    border: 1.5px solid var(--pastel-blue-border);
+  }
+  .cs-tag.t-add { background: var(--pastel-green); color: #2c6e39; border-color: var(--pastel-green-border); }
+  .cs-tag.t-err { background: var(--pastel-peach); color: #a14c30; border-color: var(--pastel-peach-border); }
+
+  /* 별칭(비슷한 말)으로만 걸린 항목 — 본문에 노란색이 없는 이유를 알려줍니다 */
+  .cs-related {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: .74rem;
+    font-weight: 700;
+    vertical-align: middle;
+    background: #fff1e5;
+    color: #9c5531;
+    border: 1.5px solid #f2b896;
+  }
+
+  .cs-group {
+    margin: 26px 0 14px;
+    padding: 10px 14px;
+    background: #fff8f0;
+    border: 2px dashed #f0c39f;
+    border-radius: 16px;
+    font-weight: 700;
+    color: var(--point-brown);
+  }
+  .cs-group span { display: block; font-weight: 400; font-size: .86rem; color: var(--text-muted); margin-top: 2px; }
+  .cs-group[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -259,6 +313,185 @@ stop music fadeout 1.0</pre>
       </div>
     </section>
 
+
+    <!-- ===== 여기서부터 추가 항목 (지침서 §7.4 이후 보강) ===== -->
+    <div class="cs-group">📚 더 알아보기
+      <span>5~10회차에 실제로 막히는 것들입니다. 필요할 때 찾아보세요.</span>
+    </div>
+
+    <section class="cs-item cs-split" data-keywords="폴더 구조 파일 어디 위치 경로 이미지폴더 오디오폴더 script rpy options 저장">
+      <h3>7. 프로젝트 폴더 구조 <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">내작품/
+  game/
+    script.rpy      ← 대본을 쓰는 곳
+    options.rpy     ← 제목·글꼴·색 설정
+    images/         ← 배경과 캐릭터 그림
+    audio/          ← 음악과 효과음
+    gui/            ← 화면 꾸미기 (건드리지 않아도 됨)</pre>
+      </div>
+      <ul>
+        <li>그림은 <code class="inline">game/images</code>, 소리는 <code class="inline">game/audio</code>에 넣습니다</li>
+        <li>파일 이름은 <strong>영어 소문자와 밑줄만</strong> 쓰세요. 한글·띄어쓰기는 에러의 원인입니다</li>
+        <li><code class="inline">images/bg_school.png</code>를 넣으면 대본에서 <code class="inline">scene bg_school</code></li>
+        <li>회차 끝나기 전에 <strong>내작품 폴더 전체</strong>를 업로드합니다</li>
+      </ul>
+    </section>
+
+    <section class="cs-item cs-split" data-keywords="이미지 그림 이름 붙이기 image 정의 파일명 스프라이트 표정">
+      <h3>8. 그림에 짧은 이름 붙이기 <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">image bg school = "images/bg_school.png"
+image bg school night = "images/bg_school_night.png"
+image yuna happy = "images/yuna_happy.png"
+image yuna sad = "images/yuna_sad.png"
+
+label start:
+    scene bg school
+    show yuna happy</pre>
+      </div>
+      <ul>
+        <li><code class="inline">image 이름 = "파일 경로"</code> : 긴 파일명에 부르기 쉬운 이름을 붙입니다</li>
+        <li>띄어쓴 이름은 <code class="inline">show yuna happy</code>처럼 그대로 씁니다</li>
+        <li>이름을 안 붙이면 <strong>파일명 그대로</strong> 찾습니다 (에러 3종 중 하나의 원인)</li>
+        <li>같은 배경을 낮·노을·밤으로 색만 바꿔 다시 쓰면 그림 부담이 크게 줄어듭니다</li>
+      </ul>
+    </section>
+
+    <section class="cs-item cs-split" data-keywords="대사 따옴표 큰따옴표 줄바꿈 기울임 굵게 강조 태그 텍스트 꾸미기 특수문자">
+      <h3>9. 대사 안에 따옴표·강조 넣기 <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">y "그때 네가 \"괜찮아\"라고 했잖아."
+m "{i}그럴 리가 없어.{/i}"
+m "{b}절대{/b} 안 돼."
+m "한 박자 쉬고{w} 이어서 말한다."
+m "여기서 줄을 바꿉니다.{p}다음 줄입니다."</pre>
+      </div>
+      <ul>
+        <li><code class="inline">\"</code> : 대사 안에 큰따옴표를 넣을 때 (그냥 " 를 쓰면 에러)</li>
+        <li><code class="inline">{i}…{/i}</code> 기울임 · <code class="inline">{b}…{/b}</code> 굵게</li>
+        <li><code class="inline">{w}</code> : 클릭할 때까지 잠깐 멈춤</li>
+        <li><code class="inline">{p}</code> : 클릭하면 줄을 바꿔 이어서 표시</li>
+      </ul>
+    </section>
+
+    <section class="cs-item cs-split" data-keywords="조건부 선택지 숨기기 if 플래그 flag menu 조건 분기 잠금">
+      <h3>10. 조건이 붙은 선택지 <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">default affection = 0
+default knows_secret = False
+
+menu:
+    "역까지 쫓아간다":
+        jump run_station
+
+    "이름을 부른다" if affection &gt;= 2:
+        jump call_name
+
+    "비밀을 말한다" if knows_secret:
+        jump tell_secret</pre>
+      </div>
+      <ul>
+        <li>선택지 뒤에 <code class="inline">if 조건</code>을 붙이면 <strong>조건이 맞을 때만</strong> 보입니다</li>
+        <li>7회차에서 변수를 배운 뒤에 쓰면 이야기가 훨씬 살아납니다</li>
+        <li>참·거짓 변수는 <code class="inline">True</code> / <code class="inline">False</code> (첫 글자 대문자)</li>
+      </ul>
+    </section>
+
+    <section class="cs-item cs-split" data-keywords="call return 되돌아오기 공통 장면 재사용 함수 라벨 다녀오기">
+      <h3>11. 같은 장면 여러 번 쓰기 (call) <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">label start:
+    call morning_scene
+    "1교시가 시작됐다."
+    call morning_scene
+    "이번에도 똑같은 아침이다."
+    return
+
+label morning_scene:
+    scene bg school
+    "교문 앞에서 종소리가 들린다."
+    return</pre>
+      </div>
+      <ul>
+        <li><code class="inline">call</code>은 다녀온 뒤 <strong>부른 자리로 돌아옵니다</strong></li>
+        <li><code class="inline">jump</code>는 가서 돌아오지 않습니다. 이 차이가 핵심입니다</li>
+        <li>'만약 그때' 주제처럼 <strong>같은 하루를 반복</strong>할 때 아주 유용합니다</li>
+      </ul>
+    </section>
+
+    <section class="cs-item cs-split" data-keywords="타이틀 제목 창 이름 글꼴 폰트 색 options gui 꾸미기 UI 한글폰트">
+      <h3>12. 타이틀·글꼴 바꾸기 (options.rpy) <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">## game/options.rpy 안에서
+
+define config.name = _("세 번째 화요일")
+define gui.show_name = True
+
+## game/gui.rpy 안에서 (글꼴)
+define gui.text_font = "fonts/NanumGothic.ttf"
+define gui.text_size = 24</pre>
+      </div>
+      <ul>
+        <li><code class="inline">config.name</code> : 타이틀 화면과 창에 뜨는 작품 이름</li>
+        <li>글꼴 파일은 <code class="inline">game/fonts</code> 폴더에 넣고 경로를 적습니다</li>
+        <li>한글이 <strong>네모(□)로 보이면</strong> 한글을 지원하는 글꼴로 바꿔야 합니다 (눈누에서 무료 한글 폰트)</li>
+        <li>8회차에 작품 분위기에 맞춰 정합니다. 그 전에는 기본값으로 두세요</li>
+      </ul>
+    </section>
+
+    <section class="cs-item" data-keywords="세이브 저장 불러오기 스킵 롤백 되감기 자동 기본기능 만들지마">
+      <h3>13. 세이브·스킵은 만들지 않습니다 <span class="cs-tag t-add">추가</span></h3>
+      <ul>
+        <li><strong>Ren'Py가 기본으로 만들어 줍니다.</strong> 직접 만들 필요가 없습니다</li>
+        <li>저장·불러오기, 스킵(Ctrl), 되감기(마우스 휠 위), 자동 진행 모두 이미 들어 있습니다</li>
+        <li>8회차에는 <strong>잘 되는지 확인만</strong> 하면 됩니다</li>
+      </ul>
+    </section>
+
+    <section class="cs-item cs-split" data-keywords="빌드 배포 실행파일 exe 게시 제출 itch 웹빌드 10회차">
+      <h3>14. 배포 빌드 만들기 <span class="cs-tag t-add">추가</span></h3>
+      <div class="code-block">
+<pre class="code">Ren'Py 런처 → 내 작품 선택
+  → [Build Distributions]
+  → Windows / Mac 체크
+  → [Build]</pre>
+      </div>
+      <ul>
+        <li>10회차에 만듭니다. 만든 뒤 <strong>다른 컴퓨터에서 실행되는지</strong> 꼭 확인하세요</li>
+        <li>웹으로 올릴 때는 itch.io에 올리고 패들렛에는 <strong>링크만</strong> 붙입니다</li>
+        <li>빌드 전에 <code class="inline">renpy.notify</code> 같은 디버깅 줄을 모두 지웁니다</li>
+      </ul>
+    </section>
+
+    <section class="cs-item" id="errors2" data-keywords="에러 오류 error 안될때 문제 해결 디버깅 sayer 파일없음 폰트깨짐">
+      <h3>⚠️ 이런 에러도 자주 납니다 <span class="cs-tag t-err">에러</span></h3>
+
+      <div class="err-card">
+        <b>Sayer is not defined</b>
+        <p><code class="inline">y "안녕"</code>이라고 썼는데 <code class="inline">define y = Character(...)</code>가 없는 경우입니다.
+        말하는 사람은 <strong>쓰기 전에 먼저 define</strong> 해야 합니다. 파일 맨 위에 모아두면 편합니다.</p>
+      </div>
+
+      <div class="err-card">
+        <b>Could not find file 'images/…'</b>
+        <p>그림 파일이 그 경로에 없다는 뜻입니다. <code class="inline">game/images</code> 안에 정말 있는지,
+        확장자(<code class="inline">.png</code> / <code class="inline">.jpg</code>)와 <strong>대소문자</strong>가 같은지 확인하세요.</p>
+      </div>
+
+      <div class="err-card">
+        <b>한글이 네모(□)로 보임</b>
+        <p>글꼴이 한글을 지원하지 않는 경우입니다. 한글 폰트 파일을 <code class="inline">game/fonts</code>에 넣고
+        <code class="inline">gui.text_font</code>를 그 파일로 바꾸세요. (12번 항목 참고)</p>
+      </div>
+
+      <div class="err-card">
+        <b>대본을 고쳤는데 화면이 그대로</b>
+        <p>파일을 저장하지 않았거나, 게임 창에서 <strong>Shift+R</strong>로 새로고침하지 않은 경우입니다.
+        저장(Ctrl+S) 후 게임 창에서 Shift+R을 누르면 바로 반영됩니다.</p>
+      </div>
+    </section>
+
     <!-- 작업 습관 -->
     <section class="cs-item">
       <h3>🌱 작업 습관</h3>
@@ -329,26 +562,120 @@ stop music fadeout 1.0</pre>
   /* ---------- 실시간 검색 ---------- */
   var input = document.getElementById("csSearch");
   var items = Array.prototype.slice.call(document.querySelectorAll("#csList .cs-item"));
+  var groups = Array.prototype.slice.call(document.querySelectorAll("#csList .cs-group"));
   var countEl = document.getElementById("csCount");
   var emptyEl = document.getElementById("csEmpty");
 
-  // 검색용 텍스트를 미리 만들어 둡니다 (소문자, 공백 정리)
+  /* 검색용 텍스트를 미리 만들어 둡니다.
+     본문 + data-keywords(한글 별칭). 학생은 'menu'보다 '선택지'라고 칠 때가 많습니다. */
   items.forEach(function (el) {
-    el.dataset.search = el.textContent.replace(/\s+/g, " ").toLowerCase();
+    var body = el.textContent.replace(/\s+/g, " ");
+    var keys = el.getAttribute("data-keywords") || "";
+    el.dataset.search = (body + " " + keys).toLowerCase();
   });
 
-  function filter() {
-    var q = input.value.trim().toLowerCase();
-    var shown = 0;
-    items.forEach(function (el) {
-      var hit = (q === "") || el.dataset.search.indexOf(q) !== -1;
-      el.hidden = !hit;
-      if (hit) shown++;
+  /* 찾은 낱말에 형광펜을 칠합니다.
+     innerHTML을 갈아끼우지 않고 텍스트 노드만 손대므로 복사 버튼이 그대로 동작합니다. */
+  function clearMarks(root) {
+    var rel = root.querySelector(".cs-related");
+    if (rel) rel.parentNode.removeChild(rel);
+    var marks = root.querySelectorAll("mark.hit");
+    for (var i = 0; i < marks.length; i++) {
+      var m = marks[i];
+      m.parentNode.replaceChild(document.createTextNode(m.textContent), m);
+    }
+    if (marks.length) root.normalize();
+  }
+
+  function addMarks(root, q) {
+    if (!q) return 0;
+    var lower = q.toLowerCase();
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p = node.parentNode;
+        while (p && p !== root) {
+          // 복사 버튼 글자는 칠하지 않습니다
+          if (p.nodeName === "BUTTON" || p.nodeName === "MARK") return NodeFilter.FILTER_REJECT;
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
     });
+    var nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+
+    var count = 0;
+    nodes.forEach(function (node) {
+      var text = node.nodeValue;
+      var low = text.toLowerCase();
+      var idx = low.indexOf(lower);
+      if (idx === -1) return;
+      var frag = document.createDocumentFragment();
+      var pos = 0;
+      while (idx !== -1) {
+        if (idx > pos) frag.appendChild(document.createTextNode(text.slice(pos, idx)));
+        var mk = document.createElement("mark");
+        mk.className = "hit";
+        mk.textContent = text.slice(idx, idx + q.length);
+        frag.appendChild(mk);
+        count++;
+        pos = idx + q.length;
+        idx = low.indexOf(lower, pos);
+      }
+      if (pos < text.length) frag.appendChild(document.createTextNode(text.slice(pos)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    return count;
+  }
+
+  function filter() {
+    var raw = input.value.trim();
+    var q = raw.toLowerCase();
+    var shown = 0, hits = 0;
+
+    items.forEach(function (el) {
+      clearMarks(el);
+      var match = (q === "") || el.dataset.search.indexOf(q) !== -1;
+      el.hidden = !match;
+      if (match) {
+        shown++;
+        if (q !== "") {
+          var n = addMarks(el, raw);
+          hits += n;
+          if (n === 0) {
+            // 본문에는 없고 별칭으로 걸린 항목입니다
+            var tag = document.createElement("span");
+            tag.className = "cs-related";
+            tag.textContent = "관련";
+            var h = el.querySelector("h3");
+            if (h) h.appendChild(tag);
+          }
+        }
+      }
+    });
+
+    /* 묶음 제목은 그 아래에 보이는 항목이 하나도 없으면 같이 감춥니다 */
+    groups.forEach(function (g) {
+      var any = false;
+      var node = g.nextElementSibling;
+      while (node && !node.classList.contains("cs-group")) {
+        if (node.classList.contains("cs-item") && !node.hidden) { any = true; break; }
+        node = node.nextElementSibling;
+      }
+      g.hidden = !any;
+    });
+
     emptyEl.classList.toggle("show", shown === 0);
-    countEl.textContent = (q === "")
-      ? "전체 " + items.length + "개 항목"
-      : shown + "개 항목이 '" + input.value.trim() + "'와(과) 맞습니다";
+
+    if (q === "") {
+      countEl.textContent = "전체 " + items.length + "개 항목";
+    } else if (shown === 0) {
+      countEl.textContent = "'" + raw + "' — 찾지 못했습니다";
+    } else {
+      // 몇 개 항목인지보다, 어디에 몇 번 나오는지가 더 도움이 됩니다
+      countEl.textContent = "'" + raw + "' — " + shown + "개 항목 · 노란색 " + hits + "곳";
+    }
   }
 
   input.addEventListener("input", filter);
