@@ -12,7 +12,7 @@
    - ⚠️ 배포할 때 '액세스 권한: 모든 사용자'로 배포해야 합니다.
         학교 도메인으로 제한하면 학생 전원이 제출에 실패합니다.
    --------------------------------------------------------- */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+//const GAS_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxoTwrA9ZIojwOGRxn9kKehqLzpwTyUi_fzYadUNVYJbTiBbqkCVE0xkm7L9xiTRcZM/exec";
 
 
