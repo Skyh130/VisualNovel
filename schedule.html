@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📅 11회차 전체 일정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="./assets/style.css">
+<style>
+  .stage { margin-bottom: 22px; }
+  .stage-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.25rem;          /* 흰 글씨 대비 확보를 위해 크게 */
+    padding: 10px 16px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+  }
+  .stage-head .rounds {
+    font-size: .85rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, .25);
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .round {
+    border: 2px solid var(--border-soft);
+    border-left: 6px solid var(--border-soft);
+    border-radius: 16px;
+    background: #fffbf7;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .round-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .round-no { font-weight: 700; font-size: 1.02rem; color: var(--point-brown); }
+  .round-date { font-size: .84rem; color: var(--text-muted); font-weight: 600; }
+  .round-title { font-weight: 700; font-size: 1rem; margin: 0 0 6px; color: #5c4634; }
+  .round-goal { font-size: .93rem; margin: 0 0 10px; }
+  .round-submit {
+    font-size: .88rem;
+    background: #fff;
+    border: 2px dashed var(--border-soft);
+    border-radius: 12px;
+    padding: 8px 12px;
+  }
+  .round-submit b { color: var(--point-brown); }
+
+  /* 상태 표시 */
+  .round.is-past { opacity: .55; }
+  .round.is-current {
+    border-color: var(--accent-dark);
+    border-left-color: var(--accent-dark);
+    background: #f4f9ff;
+    box-shadow: 0 6px 16px rgba(91, 155, 213, .22);
+  }
+  .state-pill {
+    font-size: .76rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: #ece3d8;
+    color: #6b5c4d;
+  }
+  .round.is-current .state-pill { background: var(--accent-ink); color: #fff; }
+
+  /* 5회차 특별 강조 */
+  .round.is-star {
+    background: #fff7e8;
+    border-color: #e6b463;
+    border-left-color: #c9822e;
+  }
+  .round.is-star.is-current { box-shadow: 0 6px 16px rgba(201, 130, 46, .28); }
+  .star-note {
+    margin-top: 10px;
+    background: #fffdf0;
+    border: 2px solid var(--pastel-yellow-border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: .92rem;
+    line-height: 1.65;
+  }
+  .star-note b { color: #8a5a12; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .legend span {
+    font-size: .8rem;
+    font-weight: 700;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+  }
+  .today-line {
+    text-align: center;
+    font-weight: 700;
+    color: var(--point-brown);
+    background: #fff8f0;
+    border: 2px solid #f6d8be;
+    border-radius: 16px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+  }
+</style>
+</head>
+<body>
+
+<nav id="siteNav" data-page="schedule"></nav>
+
+<div class="container">
+  <div class="header-wrap">
+    <h1>📅 11회차 전체 일정</h1>
+    <div class="sub-title">2026년 9월 1일 ~ 11월 10일 · 매주 화요일 3시간 · 1인 프로젝트</div>
+  </div>
+
+  <div class="today-line" id="todayLine"></div>
+
+  <div class="legend" id="legend"></div>
+
+  <div id="stages"></div>
+
+  <section class="section">
+    <h2 class="section-title">🔁 매주 반복되는 일</h2>
+    <ul style="padding-left:20px; margin:0;">
+      <li><strong>시작 10분</strong> — 지난주 한 것 / 오늘 할 것 / 막힌 것</li>
+      <li><strong>끝 10분</strong> — 프로젝트 폴더 업로드 + AI 활용 일지 제출</li>
+      <li><strong>작업 중</strong> — 30분마다 저장, label 위에 주석 한 줄</li>
+    </ul>
+  </section>
+
+  <div class="footer-note">
+    ※ 학사일정이 바뀌면 <code class="inline">assets/config.js</code>의 <code class="inline">ROUND_DATES</code>만 고치면 모든 페이지에 반영됩니다.
+  </div>
+</div>
+
+<script src="./assets/config.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* §7.1 전체 일정 — 날짜는 config.js의 ROUND_DATES를 따릅니다 */
+  var ROUNDS = [
+    { title: "오리엔테이션 · 주제 정하기",
+      goal: "아이디어 10개를 내고 3개로 줄인 뒤, 각각 한 줄 로그라인으로 정리합니다. AI 활용 규칙을 함께 읽고 서약서에 서명합니다.",
+      submit: "주제 선택서, AI 활용 서약서 (종이)" },
+    { title: "컨셉 확정 · 세계관과 캐릭터",
+      goal: "컨셉 하나를 확정하고 캐릭터 시트를 만듭니다. “플레이어는 무엇을 선택하는가”에 답하고 나만의 질문 한 줄을 세웁니다.",
+      submit: "<b>기획 범위 계약서</b>" },
+    { title: "시나리오 · 분기 도식화",
+      goal: "플로우차트를 완성하고 씬마다 라벨명(ch1_school)을 붙입니다. 오프닝과 엔딩 3개의 대본을 씁니다.",
+      submit: "중간발표 자료 준비" },
+    { title: "중간 발표 · 개발 환경 준비",
+      goal: "기획안을 발표하고 서로 피드백합니다. 피드백을 반영해 범위를 조정한 뒤 Ren'Py 프로젝트를 만들고 에셋을 모읍니다.",
+      submit: "패들렛 중간발표 / 범위 확장 신청" },
+    { title: "★ 끝까지 돌아가는 최소 게임", star: true,
+      goal: "오프닝 → 첫 선택지 → 엔딩 3개까지, 처음부터 끝까지 실행되는 게임을 만듭니다. 이미지는 단색 사각형, 대사는 “여기 대사 들어감”이어도 괜찮습니다.",
+      submit: "실행 시연 / 범위 확장 승인",
+      note: "이번 주가 프로젝트의 성패를 가릅니다. 앞에서부터 순서대로 만들면 절반이 미완성으로 끝나지만, 뼈대를 먼저 끝까지 연결해두면 어디서 멈춰도 “돌아가는 게임”이 남습니다." },
+    { title: "본문 살 붙이기 · 연출",
+      goal: "대본을 실제로 옮기고 표정 전환과 화면 전환을 넣습니다. 배경과 스프라이트도 함께 작업합니다.",
+      submit: "목표: 전체 텍스트 60% 이상" },
+    { title: "변수 · 플래그 · 조건 분기",
+      goal: "단순 jump 분기를 변수 기반 분기로 바꿉니다. 선택지마다 변수가 얼마나 오르내리는지 표로 먼저 설계합니다.",
+      submit: "목표: 엔딩 분기 조건 완성" },
+    { title: "UI · 사운드 · 마감",
+      goal: "타이틀 화면과 글꼴, 색을 작품 분위기에 맞춥니다. 배경음악과 효과음을 넣고 세이브·스킵이 되는지 확인합니다.",
+      submit: "목표: 전체 텍스트 100% 완료" },
+    { title: "교차 플레이테스트",
+      goal: "최소 4명의 작품을 직접 플레이하고 피드백을 남깁니다. 받은 피드백은 ① 진행 불가 버그 ② 오탈자 ③ 재미 ④ 미관 순으로 고칩니다.",
+      submit: "패들렛 피드백" },
+    { title: "기능 동결 · 빌드 · 발표 준비",
+      goal: "새 기능 추가를 멈추고 버그와 오탈자만 고칩니다. 배포 빌드를 만들어 다른 컴퓨터에서 실행되는지 확인하고, 2분 시연 경로를 정해 연습합니다.",
+      submit: "배포 빌드, 크레딧 화면" },
+    { title: "최종 발표회",
+      goal: "부스를 열어 서로의 작품을 플레이하고 투표합니다. 대표 발표 후 회고를 하고 성찰문을 씁니다.",
+      submit: "패들렛 전시, 성찰문" }
+  ];
+
+  var STAGES = [
+    { name: "1단계 · 기획하기",  from: 1,  to: 3,  color: "#4a7fb5" },
+    { name: "2단계 · 점검하기",  from: 4,  to: 4,  color: "#8a6bb1" },
+    { name: "3단계 · 만들기",    from: 5,  to: 8,  color: "#c9822e" },
+    { name: "4단계 · 다듬기",    from: 9,  to: 10, color: "#3f8f7a" },
+    { name: "5단계 · 보여주기",  from: 11, to: 11, color: "#b1495f" }
+  ];
+
+  var WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
+  function prettyDate(iso) {
+    var p = iso.split("-");
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return Number(p[1]) + "/" + Number(p[2]) + " (" + WEEKDAY[d.getDay()] + ")";
+  }
+
+  var todayRound = getCurrentRound();
+  var total = ROUND_DATES.length;
+
+  /* 오늘 안내 */
+  var line = document.getElementById("todayLine");
+  if (todayRound === 0) {
+    line.textContent = "🌱 9월 1일 시작 — 아직 프로젝트가 시작되지 않았습니다.";
+  } else if (todayRound > total) {
+    line.textContent = "🌸 프로젝트 종료 — 11회차까지 모두 끝났습니다.";
+  } else {
+    line.textContent = "📍 오늘은 " + todayRound + "회차입니다 · " + ROUNDS[todayRound - 1].title;
+  }
+
+  /* 단계 범례 */
+  var legend = document.getElementById("legend");
+  STAGES.forEach(function (s) {
+    var el = document.createElement("span");
+    el.style.background = s.color;
+    el.textContent = s.name + " (" + (s.from === s.to ? s.from : s.from + "~" + s.to) + "회차)";
+    legend.appendChild(el);
+  });
+
+  /* 단계별 회차 카드 */
+  var host = document.getElementById("stages");
+  STAGES.forEach(function (s) {
+    var wrap = document.createElement("section");
+    wrap.className = "stage";
+
+    var head = document.createElement("h2");
+    head.className = "stage-head";
+    head.style.background = s.color;
+    head.innerHTML = s.name +
+      ' <span class="rounds">' + (s.from === s.to ? s.from + "회차" : s.from + "~" + s.to + "회차") + "</span>";
+    wrap.appendChild(head);
+
+    for (var n = s.from; n <= s.to; n++) {
+      var r = ROUNDS[n - 1];
+      var card = document.createElement("article");
+      card.className = "round";
+      card.style.borderLeftColor = s.color;
+      if (r.star) card.classList.add("is-star");
+      if (todayRound > 0 && todayRound <= total) {
+        if (n < todayRound) card.classList.add("is-past");
+        if (n === todayRound) card.classList.add("is-current");
+      } else if (todayRound > total) {
+        card.classList.add("is-past");
+      }
+
+      var state = "";
+      if (todayRound > 0 && todayRound <= total) {
+        if (n < todayRound) state = '<span class="state-pill">지난 회차</span>';
+        else if (n === todayRound) state = '<span class="state-pill">이번 주</span>';
+      }
+
+      card.innerHTML =
+        '<div class="round-head">' +
+          '<span class="round-no">' + n + '회차</span>' +
+          '<span class="round-date">' + prettyDate(ROUND_DATES[n - 1]) + '</span>' +
+          state +
+        '</div>' +
+        '<h3 class="round-title">' + r.title + '</h3>' +
+        '<p class="round-goal">' + r.goal + '</p>' +
+        '<div class="round-submit"><b>제출·공유</b> · ' + r.submit + '</div>' +
+        (r.note ? '<div class="star-note"><b>★ 5회차 보충 설명</b><br>' + r.note + '</div>' : "");
+
+      wrap.appendChild(card);
+    }
+    host.appendChild(wrap);
+  });
+})();
+</script>
+
+</body>
+</html>

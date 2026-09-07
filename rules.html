@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚖️ AI 활용 규칙과 저작권</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="./assets/style.css">
+<style>
+  .rule-card {
+    border-radius: 18px;
+    border: 2px solid var(--border-soft);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .rule-ok  { background: #f1faf2; border-color: var(--pastel-green-border); }
+  .rule-mid { background: #fffdf0; border-color: var(--pastel-yellow-border); }
+  .rule-no  { background: #fff1f0; border-color: #f5b8b3; }
+  .rule-card > b {
+    display: inline-block;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  .rule-ok  > b { background: #2c6e39; }
+  .rule-mid > b { background: #7a6b24; }
+  .rule-no  > b { background: #a3302a; }
+  .rule-card ul { margin: 0; padding-left: 20px; }
+  .rule-card li { margin-bottom: 6px; font-size: .93rem; }
+
+  .pledge { list-style: none; padding: 0; margin: 0; counter-reset: p; }
+  .pledge li {
+    position: relative;
+    background: #fffbf7;
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 12px 14px 12px 46px;
+    margin-bottom: 8px;
+    font-size: .93rem;
+  }
+  .pledge li::before {
+    counter-increment: p;
+    content: counter(p);
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--accent-ink);
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<nav id="siteNav" data-page="rules"></nav>
+
+<div class="container">
+  <div class="header-wrap">
+    <h1>⚖️ AI 활용 규칙과 저작권</h1>
+    <div class="sub-title">시나리오·설정은 AI와 함께, 코드는 직접</div>
+  </div>
+
+  <div class="box box-yellow">
+    <span class="badge-tag tag-yellow">※ 안내</span>
+    서약서는 1회차에 <strong>종이로 서명해 제출</strong>했습니다. 이 페이지는 <strong>내용 확인용</strong>입니다.
+  </div>
+
+  <!-- ===== AI 활용 규칙 표 ===== -->
+  <section class="section">
+    <h2 class="section-title">🤖 AI 활용 규칙</h2>
+
+    <div class="rule-card rule-ok">
+      <b>허용 (O)</b>
+      <ul>
+        <li>아이디어 발산, 세계관·캐릭터 설정 만들기</li>
+        <li>대사·나레이션 초안 작성</li>
+        <li>분기 구조 검토("이 구조의 논리적 허점은?")</li>
+        <li>오탈자 및 문장 다듬기</li>
+        <li>개념 질문("Ren'Py에서 label과 jump는 무엇인가?")</li>
+        <li>에러 메시지의 뜻 해석</li>
+      </ul>
+    </div>
+
+    <div class="rule-card rule-mid">
+      <b>조건부 (△)</b>
+      <ul>
+        <li>"왜 이런 에러가 나는지 설명해줘" → <strong>허용</strong></li>
+        <li>"고쳐서 다시 써줘", "완성된 코드를 줘" → <strong>금지</strong></li>
+      </ul>
+    </div>
+
+    <div class="rule-card rule-no">
+      <b>금지 (X)</b>
+      <ul>
+        <li>.rpy 코드를 생성해 달라고 요청하기</li>
+        <li>내 코드를 붙여넣고 "완성해줘·수정해줘"라고 요청하기</li>
+        <li>AI가 작성한 코드를 복사해서 붙여넣기</li>
+        <li>친구의 코드를 그대로 복사해 사용하기</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 준수 사항 ===== -->
+  <section class="section">
+    <h2 class="section-title">✍️ 준수 사항</h2>
+    <ol class="pledge">
+      <li>나는 AI를 사용할 때마다 'AI 활용 일지'에 기록한다.</li>
+      <li>나는 AI가 준 결과를 그대로 쓰지 않고, 내 작품에 맞게 반드시 고쳐 쓴다.</li>
+      <li>나는 코드가 막혔을 때 AI에게 코드를 요청하는 대신 치트시트 → 공식 문서 → 친구 → 선생님 순으로 먼저 묻는다.</li>
+      <li>나는 내 코드의 어느 줄이든 무슨 일을 하는지 설명할 수 있다.</li>
+      <li>나는 각 label 위에 내 말로 쓴 주석을 한 줄씩 남긴다.</li>
+      <li>나는 매 회차 종료 전 프로젝트 폴더를 공유 드라이브에 업로드한다.</li>
+      <li>나는 최종 결과물의 크레딧 화면에 AI 활용 내역과 에셋 출처를 밝힌다.</li>
+    </ol>
+    <div class="row-wrap" style="margin-top:12px;">
+      <a class="btn-ghost" href="./journal.html">📝 AI 활용 일지 쓰러 가기</a>
+      <a class="btn-ghost" href="./cheatsheet.html">📖 치트시트 먼저 보기</a>
+    </div>
+  </section>
+
+  <!-- ===== 저작권 · 에셋 ===== -->
+  <section class="section">
+    <h2 class="section-title">🖼️ 저작권 · 에셋 규칙</h2>
+    <ul style="padding-left:20px; margin:0 0 12px;">
+      <li>이미지와 음악은 <strong>출처가 분명한 자료만</strong> 사용하고, 크레딧 화면에 출처를 모두 밝힙니다.</li>
+      <li>무료 에셋을 구할 수 있는 곳: <strong>itch.io</strong> (무료 에셋), <strong>Pixabay</strong>, <strong>눈누</strong>(무료 한글 폰트)</li>
+      <li>AI 생성 이미지 사용 여부는 <strong>선생님 안내를 따릅니다.</strong></li>
+      <li>완성된 게임의 웹 빌드는 itch.io에 올리고, 패들렛에는 <strong>링크만</strong> 붙입니다.
+          패들렛 무료 계정은 첨부 용량 제한이 있어 게임 파일을 직접 올릴 수 없습니다.</li>
+    </ul>
+  </section>
+
+  <!-- ===== 꼭 지킬 것 3줄 ===== -->
+  <section class="section">
+    <h2 class="section-title">💛 꼭 지킬 것 3줄</h2>
+    <ul style="padding-left:20px; margin:0;">
+      <li>시나리오·설정은 AI와 함께, <strong>코드는 직접</strong></li>
+      <li>범위를 줄이는 것은 실패가 아니라 완성을 위한 결정</li>
+      <li>이미지·음악은 출처를 크레딧에 반드시 표기</li>
+    </ul>
+  </section>
+
+  <div class="footer-note">※ 서약서 원본은 1회차에 종이로 제출했습니다. 이 페이지는 내용 확인용입니다.</div>
+</div>
+
+<script src="./assets/config.js"></script>
+
+</body>
+</html>

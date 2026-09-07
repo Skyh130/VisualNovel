@@ -1,0 +1,75 @@
+=========================================================================
+계약서(contract.html) 수신용 구글 앱스스크립트 코드
+=========================================================================
+
+[하는 방법]
+1) 일지를 받고 있는 구글 스프레드시트를 엽니다.
+2) 상단 메뉴 [확장 프로그램] > [Apps Script]를 누릅니다.
+3) 기존 Code.gs 안에 이미 doPost 함수가 있으면, 그 함수를 아래 doPost로
+   바꿔주세요. (기존 일지 저장 함수 이름이 saveJournal이 아니라면,
+   아래 saveJournal(data) 부분을 실제 함수 이름으로 고쳐야 합니다.)
+4) saveContract 함수는 아래 것을 그대로 맨 아래에 붙여넣습니다.
+5) [배포] > [배포 관리] > 연필(수정) > 버전 '새 버전' > 배포 를 누릅니다.
+
+⚠️ 중요 — 배포할 때 반드시 확인하세요
+   "액세스 권한: 모든 사용자" 로 배포해야 합니다.
+   학교 도메인으로 제한하면 CORS로 막혀 학생 전원이 제출에 실패합니다.
+
+⚠️ 새로 배포해서 URL이 바뀌었다면
+   assets/config.js 파일의 GAS_URL 값을 새 주소로 바꿔주세요.
+
+-------------------------------------------------------------------------
+여기서부터 복사
+-------------------------------------------------------------------------
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    if (data.type === "contract") return saveContract(data);
+    return saveJournal(data);   // 기존 함수
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function saveContract(d) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName("계약서");
+  if (!sh) {
+    sh = ss.insertSheet("계약서");
+    sh.appendRow(["제출시각","번호","이름","작품제목","장르","로그라인",
+                  "선택하는것","바뀌는것","나의질문",
+                  "씬","엔딩","배경","캐릭터","분",
+                  "캐릭터목록","엔딩목록","동의"]);
+  }
+  // 같은 번호가 이미 냈으면 그 행을 지우고 새로 넣음 (재제출 허용)
+  const vals = sh.getDataRange().getValues();
+  for (let i = vals.length - 1; i >= 1; i--) {
+    if (String(vals[i][1]) === String(d.studentNumber)) sh.deleteRow(i + 1);
+  }
+  sh.appendRow([
+    new Date(), d.studentNumber, d.studentName, d.title, d.genre, d.logline,
+    d.qChoose, d.qChange, d.myQuestion,
+    d.scope.scenes, d.scope.endings, d.scope.backgrounds,
+    d.scope.characters, d.scope.minutes,
+    d.characters.map(c => `${c.name}|${c.role}|${c.personality}`).join("\n"),
+    d.endings.map(x => `${x.label}|${x.name}|${x.condition}`).join("\n"),
+    d.agreed ? "O" : "X"
+  ]);
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "success" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+-------------------------------------------------------------------------
+여기까지 복사
+-------------------------------------------------------------------------
+
+[계약서 시트에 저장되는 항목]
+  제출시각 / 번호 / 이름 / 작품제목 / 장르 / 로그라인 /
+  선택하는것 / 바뀌는것 / 나의질문 /
+  씬 / 엔딩 / 배경 / 캐릭터 / 분 /
+  캐릭터목록(이름|역할|성격, 줄바꿈으로 구분) /
+  엔딩목록(라벨|이름|조건, 줄바꿈으로 구분) / 동의(O/X)

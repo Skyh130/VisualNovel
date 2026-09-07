@@ -320,11 +320,13 @@ input.is-error, textarea.is-error, select.is-error {
   border-radius: 18px;
   padding: 14px 16px;
 }
+/* 체크박스 자체는 28px이지만, 옆의 label 전체(선언 문구)를 눌러도 체크됩니다.
+   실제 터치 대상은 카드 한 줄 전체라 44px보다 훨씬 넓습니다. */
 .check-row input[type="checkbox"] {
   flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  margin: 2px 0 0;
+  width: 28px;
+  height: 28px;
+  margin: 0;
   accent-color: var(--accent-dark);
   cursor: pointer;
 }
@@ -389,8 +391,8 @@ input.is-error, textarea.is-error, select.is-error {
   color: #b3352c;
   border: 1px solid #f8c3be;
   border-radius: 10px;
-  padding: 8px 12px;
-  min-height: 40px;
+  padding: 8px 14px;
+  min-height: 44px;
   font-size: .82rem;
   font-weight: 600;
   font-family: inherit;
@@ -492,8 +494,17 @@ table.data tr:last-child td { border-bottom: none; }
 }
 
 /* ---------- 코드 블록 (여기만 가로 스크롤 허용) ---------- */
-.code-block { position: relative; margin: 0 0 14px; }
+/* column-reverse라서, 스크립트가 뒤에 붙인 복사 버튼이 코드 위쪽에 놓입니다.
+   버튼이 코드를 가리지 않으면서도 터치 대상 44px을 지킬 수 있습니다. */
+.code-block {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: 6px;
+  margin: 0 0 14px;
+}
 pre.code {
+  width: 100%;
   margin: 0;
   padding: 14px 14px 14px;
   background: #2f2a26;
@@ -518,11 +529,9 @@ code.inline {
   overflow-wrap: break-word;
 }
 .btn-copy {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  min-height: 34px;
-  padding: 6px 12px;
+  align-self: flex-end;
+  min-height: 44px;
+  padding: 8px 18px;
   background: #fdf6ec;
   color: #6b4a2f;
   border: 1.5px solid #c9b49a;

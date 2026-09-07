@@ -66,7 +66,10 @@ const SCOPE_LIMITS = {
    - 그 외에는 1 ~ 11                                        */
 function getCurrentRound(todayStr) {
   const today = todayStr || new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
-  if (today < ROUND_DATES[0]) return 0;               // 아직 시작 전
+  if (today < ROUND_DATES[0]) return 0;                          // 아직 시작 전
+  if (today > ROUND_DATES[ROUND_DATES.length - 1]) {             // 마지막 회차도 지남
+    return ROUND_DATES.length + 1;                               // = 프로젝트 종료
+  }
   let idx = 0;
   ROUND_DATES.forEach((d, i) => { if (today >= d) idx = i; });
   return idx + 1;

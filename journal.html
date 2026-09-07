@@ -8,7 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <!-- 공통 내비게이션용 스타일. 아래 <style>이 뒤에 오므로 이 페이지의 기존 모양은 그대로 유지됩니다. -->
+  <link rel="stylesheet" href="./assets/style.css">
+
   <style>
     :root {
       --bg-cream: #fbf7ee;
@@ -301,6 +304,8 @@
 </head>
 <body>
 
+<nav id="siteNav" data-page="journal"></nav>
+
 <div class="container">
   <!-- 상단 타이틀 -->
   <div class="header-wrap">
@@ -390,6 +395,7 @@
   <div class="footer-note">※ 칸이 부족하면 [+ 기록 행 추가하기]를 눌러 이어서 작성할 수 있습니다.</div>
 </div>
 
+<script src="./assets/config.js"></script>
 <script>
   // 🔴 1단계에서 복사한 구글 앱스 스크립트 웹 앱 배포 URL을 여기에 넣어주세요!
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
