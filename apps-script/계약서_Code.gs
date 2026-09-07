@@ -38,6 +38,9 @@
  * ========================================================================= */
 const CLASS_CODE = "여기에_반_암호";
 
+/* 배포가 반영됐는지 확인하는 표시입니다. 고치지 않아도 됩니다. */
+const DEPLOY_TAG = "contract-2026-09-07";
+
 /* 반 암호가 맞는지 확인합니다. 맞으면 빈 값, 틀리면 오류 응답을 돌려줍니다. */
 function checkClassCode_(d) {
   if (CLASS_CODE === "여기에_반_암호") {
@@ -119,4 +122,31 @@ function saveContract(d) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/* 브라우저에서 이 배포 URL을 그냥 열면(주소창에 붙여넣고 엔터) 상태를 보여줍니다.
+   지금 그 URL이 "어느 코드"를 돌리고 있는지 확인하는 용도입니다.
+   ※ 암호 값 자체는 절대 보여주지 않습니다. 설정 여부만 알려줍니다. */
+function doGet() {
+  const set = (CLASS_CODE !== "여기에_반_암호" && String(CLASS_CODE).trim() !== "");
+  const lines = [
+    "[계약서 수신 스크립트]",
+    "",
+    "배포 확인 코드 : " + DEPLOY_TAG,
+    "반 암호        : " + (set ? "설정됨 ✅" : "설정 안 됨 ❌"),
+    "",
+    set
+      ? "정상입니다. 학생들이 제출할 수 있습니다."
+      : [
+          "아직 CLASS_CODE를 바꾸지 않은 코드가 배포되어 있습니다.",
+          "",
+          "1) 이 스크립트 맨 위 CLASS_CODE 를 실제 암호로 바꾸고 저장(Ctrl+S)",
+          "2) [배포] > [배포 관리] > 연필(수정) > 버전 '새 버전' > [배포]",
+          "   ※ [새 배포]를 누르면 URL이 새로 생겨 예전 주소가 계속 옛 코드를",
+          "     돌립니다. 반드시 [배포 관리] > 수정 > 새 버전으로 하세요.",
+          "3) 이 페이지를 새로고침해서 '설정됨'으로 바뀌는지 확인"
+        ].join("\n")
+  ];
+  return ContentService.createTextOutput(lines.join("\n"))
+    .setMimeType(ContentService.MimeType.TEXT);
 }
