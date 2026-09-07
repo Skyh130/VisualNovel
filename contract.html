@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📋 기획 범위 계약서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="./assets/style.css">
+<style>
+  /* 계약서 전용 소소한 스타일 */
+  .scope-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  .scope-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .scope-row:last-of-type { border-bottom: none; }
+  @media (min-width: 900px) {
+    /* 넓은 화면에서는 두 줄씩 나란히 — 위아래로 길어지지 않게 */
+    #scopeTable {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 28px;
+    }
+    .scope-row:nth-last-of-type(2) { border-bottom: none; }
+  }
+  .scope-name { font-weight: 700; color: var(--point-brown); font-size: .95rem; }
+  .scope-max  { display: block; font-weight: 400; color: var(--text-muted); font-size: .82rem; }
+  .scope-input-wrap { display: flex; align-items: center; gap: 6px; }
+  .scope-input-wrap input { width: 84px; text-align: center; font-weight: 700; }
+  .scope-unit { font-weight: 700; color: var(--point-brown); font-size: .9rem; }
+  .scope-row .error-msg { grid-column: 1 / -1; margin-top: 0; }
+
+  /* 도우미(접이식) */
+  details.helper {
+    border: 2px solid var(--pastel-yellow-border);
+    background: #fffdf0;
+    border-radius: 18px;
+    padding: 0;
+    margin-bottom: 12px;
+  }
+  details.helper > summary {
+    list-style: none;
+    cursor: pointer;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-weight: 700;
+    color: #6b5c1c;
+    font-size: .95rem;
+  }
+  details.helper > summary::-webkit-details-marker { display: none; }
+  details.helper > summary::after { content: "펼치기 ▾"; margin-left: auto; font-size: .82rem; font-weight: 700; color: var(--text-muted); }
+  details.helper[open] > summary::after { content: "접기 ▴"; }
+  .helper-body { padding: 0 16px 16px; font-size: .92rem; line-height: 1.7; }
+  .helper-body ul { padding-left: 20px; margin: 6px 0 12px; }
+  .helper-body li { margin-bottom: 6px; }
+  .formula {
+    background: #fff;
+    border: 2px dashed #e0c98f;
+    border-radius: 14px;
+    padding: 12px 14px;
+    text-align: center;
+    font-weight: 700;
+    color: #6b5c1c;
+    margin: 10px 0;
+    overflow-wrap: break-word;
+  }
+
+  /* 캐릭터 / 엔딩 반복 행 */
+  .repeat-row {
+    background: #fffbf7;
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .repeat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .repeat-no { font-weight: 700; color: var(--point-brown); font-size: .9rem; }
+  .repeat-fields { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  @media (min-width: 640px) {
+    .repeat-fields.c3 { grid-template-columns: 1fr 1fr 1.4fr; }
+  }
+  .repeat-fields label { font-size: .82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px; }
+
+  @media (min-width: 900px) {
+    /* 컴퓨터에서 길게 쓰는 칸은 조금 더 높게 */
+    #logline, #myQuestion { min-height: 96px; }
+  }
+
+  /* 제출 완료 화면 */
+  #doneCard { display: none; }
+  #doneCard.show { display: block; }
+  .done-list { margin: 10px 0 0; padding-left: 20px; }
+  .done-list li { margin-bottom: 4px; }
+  .save-state { font-size: .82rem; color: var(--text-muted); text-align: center; margin-top: 4px; min-height: 1.2em; }
+</style>
+</head>
+<body>
+
+<div id="siteTop" data-page="contract"></div>
+
+<div class="container">
+
+  <div class="header-wrap">
+    <h2 class="page-title">📋 기획 범위 계약서</h2>
+    <div class="sub-title">Ren'Py 비주얼 노벨 제작 프로젝트 · 2회차(9/8) 제출</div>
+
+    <div class="badge-bar">
+      <div class="class-badge" id="classBadge">융합소프트웨어과 2학년 1반</div>
+      <div class="info-input-wrap">
+        <span>🐻 번호</span>
+        <input type="number" id="studentNumber" min="1" max="99" placeholder="번호" aria-label="학생 번호" required>
+      </div>
+      <div class="info-input-wrap">
+        <span>🐰 이름</span>
+        <input type="text" id="studentName" placeholder="성명 입력" aria-label="학생 이름" required>
+      </div>
+    </div>
+  </div>
+
+  <div class="guidance">
+    <span class="badge-tag">💡 이 문서는</span>
+    앞으로 11주 동안 <strong>무엇을 만들지 스스로와 약속하는 문서</strong>입니다.
+    범위를 <strong>줄이는 것은 실패가 아니라 작품을 완성하기 위한 정상적인 결정</strong>입니다.
+    작성 중인 내용은 이 기기에 자동으로 임시저장되니, 실수로 새로고침해도 사라지지 않습니다.
+  </div>
+
+  <form id="contractForm" novalidate>
+
+    <!-- ===== 1. 작품 정보 ===== -->
+    <section class="section">
+      <h2 class="section-title">🎬 1. 작품 정보</h2>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="title">작품 제목</label>
+          <input type="text" id="title" name="title" aria-label="작품 제목" placeholder="예: 세 번째 화요일" required>
+          <p class="error-msg" id="err_title">작품 제목을 적어주세요. 가제여도 괜찮습니다.</p>
+        </div>
+
+        <div class="field">
+          <label for="genre">장르 · 분위기</label>
+          <input type="text" id="genre" name="genre" aria-label="장르와 분위기" placeholder="예: 학원 드라마 / 잔잔하고 조금 쓸쓸한" required>
+          <p class="error-msg" id="err_genre">장르와 분위기를 적어주세요.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="logline">로그라인 (한 줄 요약)</label>
+        <span class="hint">누가, 어떤 상황에서, 무엇을 하게 되는지 한 문장으로 씁니다.</span>
+        <textarea id="logline" name="logline" aria-label="로그라인 한 줄 요약" placeholder="예: 전학 가는 친구를 배웅하지 못한 날로 돌아간 학생이, 이번에는 역까지 쫓아가기로 한다." required></textarea>
+        <p class="error-msg" id="err_logline">로그라인을 한 줄 적어주세요.</p>
+      </div>
+    </section>
+
+    <!-- ===== 2. 핵심 질문 ===== -->
+    <section class="section">
+      <h2 class="section-title">🔑 2. 핵심 질문</h2>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="qChoose">플레이어는 무엇을 선택하는가?</label>
+          <textarea id="qChoose" name="qChoose" aria-label="플레이어는 무엇을 선택하는가" placeholder="예: 그날의 순간에 개입할지, 그대로 둘지를 선택한다." required></textarea>
+          <p class="error-msg" id="err_qChoose">플레이어가 무엇을 선택하는지 적어주세요.</p>
+        </div>
+
+        <div class="field">
+          <label for="qChange">그 선택은 무엇을 바꾸는가?</label>
+          <textarea id="qChange" name="qChange" aria-label="그 선택은 무엇을 바꾸는가" placeholder="예: 친구와의 관계, 그리고 주인공이 자기 자신을 보는 방식이 달라진다." required></textarea>
+          <p class="error-msg" id="err_qChange">그 선택이 무엇을 바꾸는지 적어주세요.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2-1. 나의 질문 ===== -->
+    <section class="section">
+      <h2 class="section-title">🌟 2-1. 나의 질문 <span class="pill">가장 중요</span></h2>
+
+      <details class="helper">
+        <summary>💡 '나의 질문'은 이렇게 씁니다 — 막히면 눌러서 펼쳐보세요</summary>
+        <div class="helper-body">
+          <p>이야기 아이디어를 적는 칸이 아닙니다. <strong>선택의 축</strong>을 적는 칸입니다.<br>
+          내가 소중하게 여기는 두 가지가 동시에 지켜질 수 없는 상황을 한 문장으로 쓰세요.</p>
+
+          <div class="formula">( A )와 ( B )가 충돌할 때, 나는 무엇을 택할 것인가</div>
+
+          <p><strong>잘 됐는지 확인하는 법</strong> — 이 질문에 서로 다른 답 세 개를 낼 수 있나요?
+          셋이 나오면 그게 곧 엔딩 3개입니다. 하나밖에 안 나오면 답이 정해진 질문이라 다시 써야 합니다.</p>
+
+          <p><strong>이렇게 쓰면 다시 써야 합니다</strong></p>
+          <ul>
+            <li>"시간을 되돌리면 어떻게 될까?" → 답이 사건입니다. 선택이 아닙니다.</li>
+            <li>"친구를 배신해도 될까?" → 답이 이미 정해져 있습니다.</li>
+            <li>"인간이란 무엇인가" → 10분짜리 게임으로 답할 수 없습니다.</li>
+            <li>"AI는 위험한가" → 주인공이 없습니다. 플레이어가 선택할 게 없습니다.</li>
+          </ul>
+
+          <p><strong>예시</strong> (그대로 쓰지 말고 참고만 하세요)</p>
+          <ul>
+            <li>후회를 지우는 것과 그때의 나를 인정하는 것, 무엇이 나를 살게 하는가</li>
+            <li>친구를 지키는 것과 정직한 것이 충돌할 때, 나는 무엇을 택할 것인가</li>
+            <li>정확한 판정과 틀릴 자유 중 무엇이 더 중요한가</li>
+          </ul>
+
+          <p>아직 완성되지 않아도 괜찮습니다. 떠오르는 대로 적으세요.</p>
+        </div>
+      </details>
+
+      <div class="field">
+        <label for="myQuestion">나의 질문 (한 줄)</label>
+        <textarea id="myQuestion" name="myQuestion" aria-label="나의 질문 한 줄"
+          placeholder="( 무엇 )과 ( 무엇 )이 충돌할 때, 나는 무엇을 택할 것인가" required></textarea>
+        <p class="error-msg" id="err_myQuestion">나의 질문을 한 줄 적어주세요. 위의 도우미를 펼쳐 문장 틀을 참고하세요.</p>
+      </div>
+    </section>
+
+    <!-- ===== 3. 제작 범위 ===== -->
+    <section class="section">
+      <h2 class="section-title">📏 3. 제작 범위</h2>
+
+      <div class="box box-yellow">
+        <span class="badge-tag tag-yellow">※ 읽어보세요</span>
+        이 숫자는 최소가 아니라 <strong>최대 기준</strong>입니다. '캐릭터 5명'은 그림과 표정을 갖춘 인물의 수이며,
+        이름과 대사만 나오는 인물은 몇 명이든 괜찮습니다. 배경은 같은 장소를 낮·노을·밤으로 색만 바꿔 다시 쓰는 것이 기본입니다.
+      </div>
+
+      <div class="scope-table" id="scopeTable">
+        <!-- config.js의 SCOPE_LIMITS로 자동 생성됩니다 -->
+      </div>
+
+      <div class="box box-peach" style="margin-top:16px;">
+        <span class="badge-tag tag-peach">📈 범위를 늘리고 싶다면</span>
+        배경과 캐릭터는 4회차 중간발표 때 신청하고, 5회차에 처음부터 끝까지 실행되는 뼈대를 완성한 사람만 늘릴 수 있습니다.
+        얼마나 늘릴지는 그때 선생님과 상의해 정합니다. 다만 <strong>씬 수와 엔딩 수는 누구도 늘릴 수 없습니다.</strong>
+      </div>
+    </section>
+
+    <!-- ===== 4. 캐릭터 ===== -->
+    <section class="section">
+      <h2 class="section-title">🧑‍🤝‍🧑 4. 캐릭터</h2>
+      <p class="note">그림과 표정을 갖춘 인물만 적습니다. 최대 5명입니다. 비어 있는 행은 제출되지 않습니다.</p>
+      <div id="charRows"></div>
+      <button type="button" class="btn-add" id="addChar">🌱 + 캐릭터 추가</button>
+      <p class="error-msg" id="err_characters">캐릭터를 최소 1명은 적어주세요.</p>
+    </section>
+
+    <!-- ===== 5. 엔딩 ===== -->
+    <section class="section">
+      <h2 class="section-title">🏁 5. 엔딩</h2>
+      <p class="note">엔딩은 3개입니다. 라벨명은 Ren'Py에서 쓸 이름이라 영어·숫자·밑줄만 사용합니다. (예: <code class="inline">end_true</code>)</p>
+      <div id="endRows"></div>
+      <button type="button" class="btn-add" id="addEnd">🌱 + 엔딩 추가</button>
+      <p class="error-msg" id="err_endings">엔딩을 최소 1개는 적어주세요.</p>
+    </section>
+
+    <!-- ===== 6. 선언 ===== -->
+    <section class="section">
+      <h2 class="section-title">✍️ 6. 선언</h2>
+      <div class="check-row">
+        <input type="checkbox" id="agreed" aria-label="범위 준수 선언에 동의합니다" required>
+        <label for="agreed">
+          나는 위 범위를 지키며 제작합니다. 범위를 늘리고 싶을 때는 반드시 선생님과 상의한 뒤 조정합니다.
+          또한 범위를 줄이는 것은 실패가 아니라 작품을 완성하기 위한 정상적인 결정임을 이해합니다.
+        </label>
+      </div>
+      <p class="error-msg" id="err_agreed">선언에 체크해야 제출할 수 있습니다.</p>
+    </section>
+
+    <div class="bottom-bar">
+      <button type="submit" class="btn-submit" id="submitBtn">계약서 제출하기 ✈️</button>
+      <div id="statusMessage" class="status-msg" role="status" aria-live="polite"></div>
+      <div class="row-wrap" style="justify-content:center;">
+        <button type="button" class="btn-ghost" id="saveBtn">💾 지금 임시저장</button>
+        <button type="button" class="btn-ghost" id="clearBtn">🧹 작성 내용 지우기</button>
+      </div>
+      <div class="save-state" id="saveState"></div>
+    </div>
+  </form>
+
+  <!-- 제출 완료 확인 -->
+  <div class="box box-green" id="doneCard">
+    <span class="badge-tag tag-green">✅ 제출 완료</span>
+    <strong id="doneWho"></strong>의 계약서가 저장되었습니다.
+    <ul class="done-list" id="doneSummary"></ul>
+    <p style="margin-top:10px;">고칠 내용이 있으면 다시 작성해 제출하면 됩니다. <strong>같은 번호로 다시 내면 최신 것만 남습니다.</strong></p>
+    <div class="row-wrap" style="margin-top:10px;">
+      <button type="button" class="btn-ghost" id="reeditBtn">✏️ 이어서 수정하기</button>
+      <a class="btn-ghost" href="./index.html">🏠 홈으로</a>
+    </div>
+  </div>
+
+  <div class="footer-note">※ 종이 양식을 그대로 옮긴 것입니다. 제출 후에도 수업 시간 안에는 다시 제출할 수 있습니다.</div>
+</div>
+
+<script src="./assets/config.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "vn_contract_draft_v1";
+  var MAX_CHARS = 5;   // 캐릭터 기본 5행
+  var MAX_ENDS  = 3;   // 엔딩 기본 3행
+
+  /* config.js를 못 불러오면(문법 오류·파일 없음) 아래 코드가 전부 멈춰
+     빈 양식만 남습니다. 학생이 헛수고하지 않도록 눈에 띄게 알리고 제출을 막습니다. */
+  if (typeof SCOPE_LIMITS === "undefined" || typeof GAS_URL_CONTRACT === "undefined") {
+    var warnBox = document.createElement("div");
+    warnBox.className = "box box-warn";
+    warnBox.setAttribute("role", "alert");
+    warnBox.innerHTML = '<span class="badge-tag tag-warn">⚠️ 설정 파일 오류</span>' +
+      '설정 파일(assets/config.js)을 불러오지 못해 지금은 이 양식을 쓸 수 없습니다. ' +
+      '<strong>선생님께 알려주세요.</strong> 지금 작성해도 저장되지 않습니다.';
+    var cont = document.querySelector(".container");
+    cont.insertBefore(warnBox, cont.firstChild);
+    var sb = document.getElementById("submitBtn");
+    sb.disabled = true;
+    sb.textContent = "제출할 수 없습니다 (설정 오류)";
+    return;
+  }
+
+  var form       = document.getElementById("contractForm");
+  var submitBtn  = document.getElementById("submitBtn");
+  var statusMsg  = document.getElementById("statusMessage");
+  var saveState  = document.getElementById("saveState");
+  var doneCard   = document.getElementById("doneCard");
+
+  document.getElementById("classBadge").textContent = CLASS_NAME;
+
+  /* ---------- 3. 제작 범위 입력칸 만들기 (상한은 읽기 전용 표시) ---------- */
+  var SCOPE_KEYS = ["scenes", "endings", "backgrounds", "characters", "minutes"];
+  (function buildScope() {
+    var wrap = document.getElementById("scopeTable");
+    SCOPE_KEYS.forEach(function (key) {
+      var s = SCOPE_LIMITS[key];
+      var row = document.createElement("div");
+      row.className = "scope-row";
+      row.innerHTML =
+        '<div>' +
+          '<label class="scope-name" for="scope_' + key + '">' + s.label +
+            '<span class="scope-max">상한 ' + s.max + s.unit + ' (최대 기준)</span>' +
+          '</label>' +
+        '</div>' +
+        '<div class="scope-input-wrap">' +
+          '<input type="number" id="scope_' + key + '" min="0" max="99" inputmode="numeric" ' +
+                 'aria-label="' + s.label + ' 내가 정한 값 (상한 ' + s.max + s.unit + ')" placeholder="0">' +
+          '<span class="scope-unit">' + s.unit + '</span>' +
+        '</div>' +
+        '<p class="error-msg" id="err_scope_' + key + '"></p>';
+      wrap.appendChild(row);
+    });
+  })();
+
+  function scopeInput(key) { return document.getElementById("scope_" + key); }
+  function scopeErr(key)   { return document.getElementById("err_scope_" + key); }
+
+  /* 상한 검증: 넘으면 즉시 빨갛게 + 메시지 */
+  function checkScope(key, silentWhenEmpty) {
+    var s = SCOPE_LIMITS[key];
+    var el = scopeInput(key);
+    var err = scopeErr(key);
+    var raw = el.value.trim();
+
+    if (raw === "") {
+      if (silentWhenEmpty) { setError(el, err, ""); return false; }
+      setError(el, err, s.label + "을(를) 적어주세요.");
+      return false;
+    }
+    var n = Number(raw);
+    if (!isFinite(n) || n < 1 || Math.floor(n) !== n) {
+      setError(el, err, "1 이상의 숫자를 적어주세요.");
+      return false;
+    }
+    if (n > s.max) {
+      setError(el, err, s.label + " 상한은 " + s.max + s.unit + "입니다. 줄여서 다시 적어주세요.");
+      return false;
+    }
+    setError(el, err, "");
+    return true;
+  }
+
+  function setError(el, errEl, msg) {
+    if (msg) {
+      if (el) el.classList.add("is-error");
+      if (errEl) { errEl.textContent = msg; errEl.classList.add("show"); }
+    } else {
+      if (el) el.classList.remove("is-error");
+      if (errEl) { errEl.textContent = ""; errEl.classList.remove("show"); }
+    }
+  }
+
+  SCOPE_KEYS.forEach(function (key) {
+    var el = scopeInput(key);
+    el.addEventListener("input", function () { checkScope(key, true); saveDraftSoon(); });
+    el.addEventListener("blur",  function () { checkScope(key, true); });
+  });
+
+  /* ---------- 4. 캐릭터 / 5. 엔딩 반복 행 ---------- */
+  function charRowHTML(i) {
+    return '<div class="repeat-head">' +
+             '<span class="repeat-no">캐릭터 ' + i + '</span>' +
+             '<button type="button" class="btn-remove" data-remove="char">삭제</button>' +
+           '</div>' +
+           '<div class="repeat-fields c3">' +
+             '<div><label>이름</label><input type="text" data-f="name" aria-label="캐릭터 이름" placeholder="예: 유나"></div>' +
+             '<div><label>역할</label><input type="text" data-f="role" aria-label="캐릭터 역할" placeholder="예: 주인공의 단짝"></div>' +
+             '<div><label>한 줄 성격</label><input type="text" data-f="personality" aria-label="캐릭터 한 줄 성격" placeholder="예: 먼저 말 걸지 못하지만 끝까지 기다려 주는 아이"></div>' +
+           '</div>';
+  }
+  function endRowHTML(i) {
+    return '<div class="repeat-head">' +
+             '<span class="repeat-no">엔딩 ' + i + '</span>' +
+             '<button type="button" class="btn-remove" data-remove="end">삭제</button>' +
+           '</div>' +
+           '<div class="repeat-fields c3">' +
+             '<div><label>라벨명</label><input type="text" data-f="label" aria-label="엔딩 라벨명" placeholder="예: end_true"></div>' +
+             '<div><label>엔딩 이름</label><input type="text" data-f="name" aria-label="엔딩 이름" placeholder="예: 배웅"></div>' +
+             '<div><label>도달 조건</label><input type="text" data-f="condition" aria-label="엔딩 도달 조건" placeholder="예: 친밀도 5 이상이고 역에 도착했을 때"></div>' +
+           '</div>';
+  }
+
+  function addRow(kind) {
+    var host = document.getElementById(kind === "char" ? "charRows" : "endRows");
+    var div = document.createElement("div");
+    div.className = "repeat-row";
+    div.innerHTML = (kind === "char" ? charRowHTML : endRowHTML)(host.children.length + 1);
+    host.appendChild(div);
+    renumber(kind);
+    return div;
+  }
+
+  function renumber(kind) {
+    var host = document.getElementById(kind === "char" ? "charRows" : "endRows");
+    var word = kind === "char" ? "캐릭터 " : "엔딩 ";
+    Array.prototype.forEach.call(host.children, function (row, i) {
+      row.querySelector(".repeat-no").textContent = word + (i + 1);
+    });
+  }
+
+  document.getElementById("addChar").addEventListener("click", function () { addRow("char"); saveDraftSoon(); });
+  document.getElementById("addEnd").addEventListener("click",  function () { addRow("end");  saveDraftSoon(); });
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest("[data-remove]") : null;
+    if (!btn) return;
+    var kind = btn.getAttribute("data-remove");
+    var host = document.getElementById(kind === "char" ? "charRows" : "endRows");
+    if (host.children.length <= 1) {
+      alert("최소 1개의 행은 남아 있어야 합니다. 🐾");
+      return;
+    }
+    btn.closest(".repeat-row").remove();
+    renumber(kind);
+    saveDraftSoon();
+  });
+
+  function collectRows(kind) {
+    var host = document.getElementById(kind === "char" ? "charRows" : "endRows");
+    var keys = kind === "char" ? ["name", "role", "personality"] : ["label", "name", "condition"];
+    var out = [];
+    Array.prototype.forEach.call(host.children, function (row) {
+      var obj = {};
+      var any = false;
+      keys.forEach(function (k) {
+        var v = row.querySelector('[data-f="' + k + '"]').value.trim();
+        obj[k] = v;
+        if (v !== "") any = true;
+      });
+      if (any) out.push(obj);   // 완전히 빈 행은 보내지 않음
+    });
+    return out;
+  }
+
+  function fillRows(kind, list) {
+    var host = document.getElementById(kind === "char" ? "charRows" : "endRows");
+    host.innerHTML = "";
+    var keys = kind === "char" ? ["name", "role", "personality"] : ["label", "name", "condition"];
+    var base = kind === "char" ? MAX_CHARS : MAX_ENDS;
+    var n = Math.max(base, list ? list.length : 0);
+    for (var i = 0; i < n; i++) {
+      var row = addRow(kind);
+      var d = list && list[i];
+      if (d) keys.forEach(function (k) { row.querySelector('[data-f="' + k + '"]').value = d[k] || ""; });
+    }
+  }
+
+  /* ---------- 임시저장 (localStorage) ---------- */
+  var TEXT_FIELDS = ["studentNumber", "studentName", "title", "genre", "logline",
+                     "qChoose", "qChange", "myQuestion"];
+
+  function currentData() {
+    var data = { scope: {}, characters: collectRows("char"), endings: collectRows("end") };
+    TEXT_FIELDS.forEach(function (id) { data[id] = document.getElementById(id).value; });
+    SCOPE_KEYS.forEach(function (k) { data.scope[k] = scopeInput(k).value; });
+    data.agreed = document.getElementById("agreed").checked;
+    return data;
+  }
+
+  function saveDraft() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData()));
+      var t = new Date();
+      saveState.textContent = "💾 임시저장됨 · " +
+        String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
+    } catch (e) {
+      saveState.textContent = "이 브라우저에서는 임시저장을 쓸 수 없습니다. 제출 전에 창을 닫지 마세요.";
+    }
+  }
+
+  var saveTimer = null;
+  function saveDraftSoon() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 500);
+  }
+
+  function loadDraft() {
+    var raw = null;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) { fillRows("char"); fillRows("end"); return; }
+    var d;
+    try { d = JSON.parse(raw); } catch (e) { fillRows("char"); fillRows("end"); return; }
+
+    TEXT_FIELDS.forEach(function (id) { if (d[id] != null) document.getElementById(id).value = d[id]; });
+    if (d.scope) SCOPE_KEYS.forEach(function (k) { if (d.scope[k] != null) scopeInput(k).value = d.scope[k]; });
+    document.getElementById("agreed").checked = !!d.agreed;
+    fillRows("char", d.characters);
+    fillRows("end", d.endings);
+    saveState.textContent = "💾 이전에 작성하던 내용을 불러왔습니다.";
+  }
+
+  form.addEventListener("input", saveDraftSoon);
+  form.addEventListener("change", saveDraftSoon);
+  document.getElementById("saveBtn").addEventListener("click", saveDraft);
+
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    if (!confirm("작성한 내용을 모두 지웁니다. 되돌릴 수 없습니다. 정말 지울까요?")) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    location.reload();
+  });
+
+  /* ---------- 검증 ---------- */
+  function needText(id, msg) {
+    var el = document.getElementById(id);
+    var err = document.getElementById("err_" + id);
+    if (el.value.trim() === "") { setError(el, err, msg); return false; }
+    setError(el, err, "");
+    return true;
+  }
+
+  function validate() {
+    var ok = true;
+    var firstBad = null;
+
+    function mark(good, el) {
+      if (!good) { ok = false; if (!firstBad) firstBad = el; }
+    }
+
+    // 번호 · 이름
+    var numEl = document.getElementById("studentNumber");
+    var nameEl = document.getElementById("studentName");
+    var numOk = numEl.value.trim() !== "" && Number(numEl.value) > 0;
+    var nameOk = nameEl.value.trim() !== "";
+    numEl.classList.toggle("is-error", !numOk);
+    nameEl.classList.toggle("is-error", !nameOk);
+    mark(numOk, numEl);
+    mark(nameOk, nameEl);
+
+    mark(needText("title", "작품 제목을 적어주세요. 가제여도 괜찮습니다."), document.getElementById("title"));
+    mark(needText("genre", "장르와 분위기를 적어주세요."), document.getElementById("genre"));
+    mark(needText("logline", "로그라인을 한 줄 적어주세요."), document.getElementById("logline"));
+    mark(needText("qChoose", "플레이어가 무엇을 선택하는지 적어주세요."), document.getElementById("qChoose"));
+    mark(needText("qChange", "그 선택이 무엇을 바꾸는지 적어주세요."), document.getElementById("qChange"));
+    mark(needText("myQuestion", "나의 질문을 한 줄 적어주세요. 위의 도우미를 펼쳐 문장 틀을 참고하세요."), document.getElementById("myQuestion"));
+
+    SCOPE_KEYS.forEach(function (k) { mark(checkScope(k, false), scopeInput(k)); });
+
+    var chars = collectRows("char");
+    var errChars = document.getElementById("err_characters");
+    if (chars.length === 0) { setError(null, errChars, "캐릭터를 최소 1명은 적어주세요."); mark(false, document.getElementById("charRows")); }
+    else setError(null, errChars, "");
+
+    var ends = collectRows("end");
+    var errEnds = document.getElementById("err_endings");
+    if (ends.length === 0) { setError(null, errEnds, "엔딩을 최소 1개는 적어주세요."); mark(false, document.getElementById("endRows")); }
+    else setError(null, errEnds, "");
+
+    var agreedEl = document.getElementById("agreed");
+    var errAgreed = document.getElementById("err_agreed");
+    if (!agreedEl.checked) { setError(null, errAgreed, "선언에 체크해야 제출할 수 있습니다."); mark(false, agreedEl); }
+    else setError(null, errAgreed, "");
+
+    if (!ok && firstBad && firstBad.scrollIntoView) {
+      firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (firstBad.focus) { try { firstBad.focus({ preventScroll: true }); } catch (e) {} }
+    }
+    return ok;
+  }
+
+  /* 번호·이름은 입력하면 빨간 표시를 바로 풀어줍니다 */
+  ["studentNumber", "studentName"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", function () { this.classList.remove("is-error"); });
+  });
+  document.getElementById("agreed").addEventListener("change", function () {
+    if (this.checked) setError(null, document.getElementById("err_agreed"), "");
+  });
+
+  /* ---------- 제출 ---------- */
+  function nowISOWithOffset() {
+    var d = new Date();
+    var off = -d.getTimezoneOffset();
+    var sign = off >= 0 ? "+" : "-";
+    var ab = Math.abs(off);
+    var pad = function (n) { return String(n).padStart(2, "0"); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) +
+           "T" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) +
+           sign + pad(Math.floor(ab / 60)) + ":" + pad(ab % 60);
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    saveDraft();  // 무슨 일이 있어도 내용은 남깁니다
+
+    if (!validate()) {
+      statusMsg.className = "status-msg status-warn";
+      statusMsg.textContent = "⚠️ 빨간색으로 표시된 곳을 확인해 주세요.";
+      return;
+    }
+
+    var payload = {
+      type: "contract",
+      studentNumber: document.getElementById("studentNumber").value.trim(),
+      studentName:   document.getElementById("studentName").value.trim(),
+      title:      document.getElementById("title").value.trim(),
+      genre:      document.getElementById("genre").value.trim(),
+      logline:    document.getElementById("logline").value.trim(),
+      qChoose:    document.getElementById("qChoose").value.trim(),
+      qChange:    document.getElementById("qChange").value.trim(),
+      myQuestion: document.getElementById("myQuestion").value.trim(),
+      scope: {
+        scenes:      Number(scopeInput("scenes").value),
+        endings:     Number(scopeInput("endings").value),
+        backgrounds: Number(scopeInput("backgrounds").value),
+        characters:  Number(scopeInput("characters").value),
+        minutes:     Number(scopeInput("minutes").value)
+      },
+      characters: collectRows("char"),
+      endings:    collectRows("end"),
+      agreed: document.getElementById("agreed").checked,
+      submittedAt: nowISOWithOffset()
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "구글 시트로 보내는 중... 🚀";
+    statusMsg.className = "status-msg status-idle";
+    statusMsg.textContent = "계약서를 차곡차곡 정리하고 있어요...";
+
+    try {
+      var res = await fetch(GAS_URL_CONTRACT, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },  // JSON으로 보내면 preflight로 실패합니다
+        body: JSON.stringify(payload)
+      });
+
+      var text = await res.text();
+      var result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseErr) {
+        // JSON이 아니라 로그인 페이지 HTML이 온 경우 = 배포 권한 문제
+        var pe = new Error("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.");
+        pe.kind = "permission";
+        throw pe;
+      }
+
+      if (result.status === "success") {
+        showDone(payload);
+      } else {
+        // 앱스스크립트가 돌려준 오류 내용을 그대로 보여줍니다
+        // (예: "다른 학생의 제출을 처리하는 중입니다. 잠시 후 다시 눌러주세요.")
+        var se = new Error(result.message || "서버가 오류를 돌려주었습니다.");
+        se.kind = "server";
+        throw se;
+      }
+    } catch (err) {
+      statusMsg.className = "status-msg status-warn";
+      if (err && err.kind === "permission") {
+        statusMsg.textContent = "⚠️ 서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.";
+        alert("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else if (err && err.kind === "server") {
+        statusMsg.textContent = "⚠️ " + err.message;
+        alert(err.message + "\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else {
+        statusMsg.textContent = "⚠️ 저장에 실패했습니다. 인터넷 연결을 확인하고 다시 눌러주세요.";
+        alert("제출 중 문제가 발생했습니다. 작성한 내용은 그대로 남아 있으니 다시 시도해 주세요.");
+      }
+      console.error(err);
+    } finally {
+      // 어떤 실패에서도 내용은 지우지 않고, 버튼은 다시 눌릴 수 있게 합니다
+      submitBtn.disabled = false;
+      submitBtn.textContent = "계약서 제출하기 ✈️";
+    }
+  });
+
+  function showDone(p) {
+    statusMsg.className = "status-msg status-ok";
+    statusMsg.textContent = "✨ 계약서가 저장되었습니다!";
+
+    document.getElementById("doneWho").textContent = p.studentNumber + "번 " + p.studentName;
+    document.getElementById("doneSummary").innerHTML =
+      "<li><strong>작품</strong> " + esc(p.title) + " · " + esc(p.genre) + "</li>" +
+      "<li><strong>나의 질문</strong> " + esc(p.myQuestion) + "</li>" +
+      "<li><strong>범위</strong> 씬 " + p.scope.scenes + " · 엔딩 " + p.scope.endings +
+        " · 배경 " + p.scope.backgrounds + " · 캐릭터 " + p.scope.characters +
+        " · " + p.scope.minutes + "분</li>" +
+      "<li><strong>캐릭터</strong> " + p.characters.length + "명 / <strong>엔딩</strong> " + p.endings.length + "개</li>";
+
+    doneCard.classList.add("show");
+    form.style.display = "none";
+    doneCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    saveDraft();  // 제출본을 그대로 임시저장에 남겨 둡니다 (수정 재제출용)
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  document.getElementById("reeditBtn").addEventListener("click", function () {
+    doneCard.classList.remove("show");
+    form.style.display = "";
+    statusMsg.textContent = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  /* ---------- 시작 ---------- */
+  loadDraft();
+})();
+</script>
+
+</body>
+</html>

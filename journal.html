@@ -8,7 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <!-- 공통 내비게이션용 스타일. 아래 <style>이 뒤에 오므로 이 페이지의 기존 모양은 그대로 유지됩니다. -->
+  <link rel="stylesheet" href="./assets/style.css">
+
   <style>
     :root {
       --bg-cream: #fbf7ee;
@@ -42,7 +45,7 @@
     }
 
     .container {
-      max-width: 980px;
+      max-width: var(--page-max, 980px);
       margin: 0 auto;
       background: var(--card-white);
       border-radius: 28px;
@@ -301,10 +304,12 @@
 </head>
 <body>
 
+<div id="siteTop" data-page="journal"></div>
+
 <div class="container">
   <!-- 상단 타이틀 -->
   <div class="header-wrap">
-    <h1>🌸 AI 활용 일지 🌸</h1>
+    <h2 class="page-title">🌸 AI 활용 일지 🌸</h2>
     <div class="sub-title">Ren'Py 비주얼 노벨 제작 프로젝트 · 매 회차 작성 후 제출</div>
 
     <!-- 소속 / 번호 / 이름 뱃지 바 -->
@@ -390,9 +395,12 @@
   <div class="footer-note">※ 칸이 부족하면 [+ 기록 행 추가하기]를 눌러 이어서 작성할 수 있습니다.</div>
 </div>
 
+<script src="./assets/config.js"></script>
 <script>
-  // 🔴 1단계에서 복사한 구글 앱스 스크립트 웹 앱 배포 URL을 여기에 넣어주세요!
-  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+  // 🔴 일지를 받는 주소는 assets/config.js 의 GAS_URL_JOURNAL 에서 관리합니다.
+  //     (계약서는 다른 스프레드시트로 가므로 주소가 따로입니다)
+  //     config.js를 못 불러온 경우에도 페이지가 멈추지 않도록 대비합니다.
+  const GAS_WEB_APP_URL = (typeof GAS_URL_JOURNAL !== "undefined") ? GAS_URL_JOURNAL : "";
 
   // 오늘 날짜 기본 지정 및 미래 날짜 입력 방지
   const dateInput = document.getElementById("date");
@@ -428,8 +436,10 @@
   document.getElementById("journalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    if (GAS_WEB_APP_URL.includes("여기에_")) {
-      alert("Apps Script 배포 URL을 상단 GAS_WEB_APP_URL에 먼저 입력해 주세요!");
+    // 주소는 config.js 에서 옵니다. 여기에 특정 주소를 적어 두면
+    // 그 주소를 쓰는 순간 제출이 통째로 막히므로, 비어 있는지만 확인합니다.
+    if (!GAS_WEB_APP_URL) {
+      alert("Apps Script 배포 URL을 불러오지 못했습니다. assets/config.js 의 GAS_URL_JOURNAL을 확인해 주세요!");
       return;
     }
 
@@ -468,7 +478,18 @@
         body: JSON.stringify(payload)
       });
       
-      const result = await res.json();
+      // 응답을 먼저 글자로 받아서 JSON인지 확인합니다.
+      // JSON이 아니면 구글 로그인 페이지 HTML이 온 것이라 '배포 권한' 문제입니다.
+      const text = await res.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseErr) {
+        const e = new Error("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.");
+        e.kind = "permission";
+        throw e;
+      }
+
       if (result.status === "success") {
         statusMsg.style.color = "#2e7d32";
         statusMsg.textContent = "✨ 시트에 성공적으로 저장되었습니다!";
@@ -478,13 +499,24 @@
         document.getElementById("journalForm").reset();
         dateInput.value = today;
       } else {
-        throw new Error(result.message || "오류 발생");
+        // 앱스스크립트가 돌려준 오류 내용을 그대로 보여줍니다 (원인 파악용)
+        const e = new Error(result.message || "서버가 오류를 돌려주었습니다.");
+        e.kind = "server";
+        throw e;
       }
     } catch (err) {
       console.error(err);
       statusMsg.style.color = "#c62828";
-      statusMsg.textContent = "⚠️ 저장에 실패했습니다. 네트워크를 확인해 주세요.";
-      alert("제출 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      if (err.kind === "permission") {
+        statusMsg.textContent = "⚠️ 서버 접근 권한 문제입니다.";
+        alert("서버 접근 권한 문제로 저장하지 못했습니다. 선생님께 알려주세요.\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else if (err.kind === "server") {
+        statusMsg.textContent = "⚠️ 서버 오류 — " + err.message;
+        alert("서버에서 아래 오류가 돌아왔습니다.\n이 문구를 선생님께 그대로 알려주세요.\n\n" + err.message + "\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      } else {
+        statusMsg.textContent = "⚠️ 저장에 실패했습니다. 인터넷 연결을 확인해 주세요.";
+        alert("제출 중 문제가 발생했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.\n\n(작성한 내용은 그대로 남아 있습니다.)");
+      }
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = "웹페이지 제출하기 (Submit) ✈️";
