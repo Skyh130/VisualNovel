@@ -4,14 +4,15 @@
  * 이 파일은 "일지용 구글 스프레드시트"에만 넣습니다.
  * 계약서용 스프레드시트에는 넣지 마세요. (두 파일은 서로 상관없습니다)
  *
- * ⚠️ 먼저 확인하세요
- *   지금 일지가 잘 저장되고 있다면 이 파일을 붙여넣을 필요가 없습니다.
- *   쓰던 것을 그대로 두세요. 붙여넣으면 열 구성이 아래와 같이 바뀌므로,
- *   이미 쌓인 기록과 열이 어긋날 수 있습니다.
+ * 이 파일은 이럴 때 씁니다.
+ *   - 제출하면 "ReferenceError: saveJournal is not defined" 가 뜰 때
+ *   - 일지용 스프레드시트를 새로 만들 때
+ *   - 기존 스크립트가 망가져 처음부터 다시 만들 때
  *
- *   이 파일은 이럴 때 씁니다.
- *     - 일지용 스프레드시트를 새로 만들 때
- *     - 기존 스크립트가 망가져 처음부터 다시 만들 때
+ * ✅ 기존 기록은 안전합니다
+ *   이미 "일지" 시트가 있고 열 이름이 아래와 다르면, 기존 시트는 그대로 두고
+ *   "일지(새 양식)" 시트를 따로 만들어 거기에 저장합니다.
+ *   열이 어긋난 채로 덮어쓰는 일은 없습니다.
  *
  * [넣는 방법]
  *   1. 일지를 받을 구글 스프레드시트를 엽니다.
@@ -63,14 +64,8 @@ function saveJournal(d) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const before = ss.getActiveSheet();
 
-    let sh = ss.getSheetByName("일지");
-    if (!sh) {
-      sh = ss.insertSheet("일지");
-      sh.appendRow(["제출시각","회차","날짜","번호","이름",
-                    "사용목적","내가 입력한 프롬프트","AI가 준 결과","내가 고친 부분과 그 이유"]);
-      sh.setFrozenRows(1);
-      ss.setActiveSheet(before);
-    }
+    const sh = getJournalSheet_(ss);
+    ss.setActiveSheet(before);   // 시트를 새로 만들었을 수 있으므로 되돌립니다
 
     const records = d.records || [];
     if (records.length === 0) {
@@ -90,4 +85,33 @@ function saveJournal(d) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/** 이 스크립트가 쓸 시트를 찾아 돌려줍니다.
+ *  이미 있는 "일지" 시트의 열 이름이 다르면, 그 시트는 건드리지 않고
+ *  "일지(새 양식)" 시트를 따로 만들어 씁니다. (기존 기록 보호) */
+function getJournalSheet_(ss) {
+  const HEADER = ["제출시각","회차","날짜","번호","이름",
+                  "사용목적","내가 입력한 프롬프트","AI가 준 결과","내가 고친 부분과 그 이유"];
+
+  function makeSheet(name) {
+    const sh = ss.insertSheet(name);
+    sh.appendRow(HEADER);
+    sh.setFrozenRows(1);
+    return sh;
+  }
+  function headerMatches(sh) {
+    if (sh.getLastRow() === 0) { sh.appendRow(HEADER); sh.setFrozenRows(1); return true; }
+    const head = sh.getRange(1, 1, 1, HEADER.length).getValues()[0].map(function (v) { return String(v).trim(); });
+    return head.join("|") === HEADER.join("|");
+  }
+
+  const main = ss.getSheetByName("일지");
+  if (!main) return makeSheet("일지");
+  if (headerMatches(main)) return main;
+
+  // 열 구성이 다릅니다. 기존 "일지" 시트는 그대로 두고 별도 시트를 씁니다.
+  const alt = ss.getSheetByName("일지(새 양식)");
+  if (alt) return headerMatches(alt) ? alt : alt;
+  return makeSheet("일지(새 양식)");
 }
