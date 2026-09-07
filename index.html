@@ -279,6 +279,22 @@
       submits: [ { text: "패들렛 전시", padlet: "padletFinal", btn: "패들렛 열기", primary: true }, { text: "성찰문" } ] }
   ];
 
+  /* config.js를 못 불러온 경우: '불러오는 중…'에서 멈춘 것처럼 보이지 않도록 알립니다. */
+  if (typeof ROUND_DATES === "undefined" || typeof SCOPE_LIMITS === "undefined") {
+    document.getElementById("heroTitle").textContent = "설정 파일을 불러오지 못했습니다";
+    document.getElementById("roundGoal").innerHTML =
+      "설정 파일(assets/config.js)에 문제가 있어 이번 주 정보를 표시할 수 없습니다. " +
+      "<strong>선생님께 알려주세요.</strong>";
+    var ctaEl = document.getElementById("heroCta");
+    ctaEl.classList.add("is-disabled");
+    ctaEl.setAttribute("aria-disabled", "true");
+    ctaEl.removeAttribute("href");
+    ctaEl.textContent = "표시할 수 없습니다";
+    document.getElementById("prevRound").disabled = true;
+    document.getElementById("nextRound").disabled = true;
+    return;
+  }
+
   var WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
   function prettyDate(iso) {
     var p = iso.split("-");
