@@ -113,6 +113,77 @@ function saveContract(d) {
 여기까지 복사
 -------------------------------------------------------------------------
 
+
+=========================================================================
+[선택] 일지 저장 함수가 이 프로젝트에 없을 때만 추가하세요
+=========================================================================
+
+제출했을 때 아래 오류가 나면, 이 프로젝트에 일지 저장 함수가 없는 것입니다.
+
+    ReferenceError: saveJournal is not defined
+
+해결 방법은 두 가지입니다.
+
+  방법 A (권장) — 일지가 쌓이던 기존 스프레드시트를 열고,
+     [확장 프로그램] > [Apps Script] 에서 위의 계약서 코드를 추가한 뒤
+     새 버전으로 배포합니다.
+     → 일지와 계약서가 한 스프레드시트에 모입니다. 지금까지 쌓인 일지도
+       그대로 이어집니다.
+
+  방법 B — 기존 프로젝트를 찾기 어려우면, 지금 프로젝트에 아래 saveJournal을
+     추가합니다.
+     → 주의: 앞으로의 일지는 "이" 스프레드시트에 쌓입니다.
+       1회차까지 받은 일지는 예전 스프레드시트에 그대로 남습니다.
+       두 파일을 나중에 합쳐야 합니다.
+
+-------------------------------------------------------------------------
+방법 B를 쓸 때만 여기서부터 복사
+-------------------------------------------------------------------------
+
+function saveJournal(d) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+  } catch (e) {
+    return jsonOut({ status: "error",
+                     message: "다른 학생의 제출을 처리하는 중입니다. 잠시 후 다시 눌러주세요." });
+  }
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const before = ss.getActiveSheet();
+
+    let sh = ss.getSheetByName("일지");
+    if (!sh) {
+      sh = ss.insertSheet("일지");
+      sh.appendRow(["제출시각","회차","날짜","번호","이름",
+                    "사용목적","내가 입력한 프롬프트","AI가 준 결과","내가 고친 부분과 그 이유"]);
+      ss.setActiveSheet(before);   // 활성 시트를 되돌립니다
+    }
+
+    // 기록 한 줄이 시트 한 행이 됩니다 (한 번 제출에 여러 행)
+    const now = new Date();
+    const rows = (d.records || []).map(function (r) {
+      return [now, d.round, d.date, d.studentNumber, d.studentName,
+              r.purpose, r.prompt, r.result, r.modification];
+    });
+    if (rows.length === 0) {
+      return jsonOut({ status: "error", message: "기록이 비어 있습니다." });
+    }
+    sh.getRange(sh.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
+
+    SpreadsheetApp.flush();
+    return jsonOut({ status: "success" });
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+-------------------------------------------------------------------------
+방법 B 복사 끝
+-------------------------------------------------------------------------
+
 [계약서 시트에 저장되는 항목]
   제출시각 / 번호 / 이름 / 작품제목 / 장르 / 로그라인 /
   선택하는것 / 바뀌는것 / 나의질문 /
