@@ -25,7 +25,7 @@
 // │    apps-script/일지_Code.gs 를 넣고 배포한 뒤,                   │
 // │    나온 주소를 아래 따옴표 " " 안에 붙여넣으세요.                 │
 // └────────────────────────────────────────────────────────────────┘
-const GAS_URL_JOURNAL  = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+const GAS_URL_JOURNAL  = "https://script.google.com/macros/s/AKfycbxgQ-4cU6ymMd6MLDPKmV5VTpBzT1YTaSp3wUFMXvfLEn_TWcoyMeK3B5yU_IAiRXRY/exec";
 
 // ┌────────────────────────────────────────────────────────────────┐
 // │ 📋 계약서용 배포 URL                                            │
