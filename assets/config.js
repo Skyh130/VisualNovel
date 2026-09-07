@@ -60,9 +60,16 @@ const ROUND_DATES = [
 ];
 
 /* ---------------------------------------------------------
-   4) 학급 이름 — 페이지 상단 뱃지에 표시됩니다.
+   4) 학급 이름 — 계약서·일지 상단 뱃지에 표시됩니다.
    --------------------------------------------------------- */
 const CLASS_NAME = "융합소프트웨어과 2학년 1반";
+
+/* ---------------------------------------------------------
+   5) 사이트 제목 — 모든 페이지 맨 위에 똑같이 표시됩니다.
+      여기만 고치면 7개 페이지에 한꺼번에 반영됩니다.
+   --------------------------------------------------------- */
+const SITE_TITLE    = "2026 응용 프로그래밍 개발";
+const SITE_SUBTITLE = "Ren'Py를 활용한 비쥬얼 노벨 게임 제작 프로젝트";
 
 /* ---------------------------------------------------------
    5) 제작 범위 상한 (최대 기준)
@@ -96,8 +103,9 @@ function getCurrentRound(todayStr) {
   return idx + 1;
 }
 
-/* 공통 내비게이션을 그려줍니다.
-   각 페이지는 <body> 안에 <nav id="siteNav" data-page="contract"></nav> 만 두면 됩니다. */
+/* 사이트 제목과 공통 내비게이션을 함께 그려줍니다.
+   각 페이지는 <body> 안에 <div id="siteTop" data-page="contract"></div> 만 두면 됩니다.
+   (제목이 위, 메뉴가 그 아래에 가운데 정렬로 들어갑니다) */
 const NAV_ITEMS = [
   { key: "index",      href: "./index.html",      label: "🏠 홈" },
   { key: "schedule",   href: "./schedule.html",   label: "📅 일정" },
@@ -108,19 +116,33 @@ const NAV_ITEMS = [
   { key: "rules",      href: "./rules.html",      label: "⚖️ 규칙" },
 ];
 
-function renderNav() {
-  const nav = document.getElementById("siteNav");
-  if (!nav) return;
-  const current = nav.dataset.page || "";
-  nav.setAttribute("aria-label", "페이지 이동");
-  nav.innerHTML =
-    '<div class="nav-chips">' +
-    NAV_ITEMS.map(function (it) {
-      const on = it.key === current;
-      return '<a class="nav-chip' + (on ? " is-current" : "") + '" href="' + it.href + '"' +
-             (on ? ' aria-current="page"' : "") + ">" + it.label + "</a>";
-    }).join("") +
-    "</div>";
+function renderSiteTop() {
+  const host = document.getElementById("siteTop");
+  if (!host) return;
+  const current = host.dataset.page || "";
+
+  const chips = NAV_ITEMS.map(function (it) {
+    const on = it.key === current;
+    return '<a class="nav-chip' + (on ? " is-current" : "") + '" href="' + it.href + '"' +
+           (on ? ' aria-current="page"' : "") + ">" + it.label + "</a>";
+  }).join("");
+
+  host.innerHTML =
+    '<header class="site-header">' +
+      "<h1>" + SITE_TITLE + "</h1>" +
+      '<p class="sub-title">' + SITE_SUBTITLE + "</p>" +
+    "</header>" +
+    '<nav class="site-nav" aria-label="페이지 이동">' +
+      '<div class="nav-chips">' + chips + "</div>" +
+    "</nav>";
+
+  // 좁은 화면에서 메뉴가 가로로 넘칠 때, 지금 보고 있는 페이지 칩이
+  // 화면 밖에 있지 않도록 메뉴 줄만 살짝 밀어 둡니다. (페이지는 움직이지 않습니다)
+  const nav = host.querySelector(".site-nav");
+  const cur = host.querySelector(".nav-chip.is-current");
+  if (nav && cur && nav.scrollWidth > nav.clientWidth) {
+    nav.scrollLeft = Math.max(0, cur.offsetLeft - (nav.clientWidth - cur.offsetWidth) / 2);
+  }
 }
 
 /* 링크가 비어 있으면 '준비 중'으로 비활성 표시합니다. */
@@ -141,4 +163,4 @@ function applyLinkButton(el, url, readyLabel) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", renderNav);
+document.addEventListener("DOMContentLoaded", renderSiteTop);

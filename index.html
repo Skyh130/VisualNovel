@@ -10,31 +10,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="./assets/style.css">
 <style>
-  /* 사이트 제목 — 다른 페이지의 header-wrap과 같은 말투 */
-  .site-header {
-    max-width: 980px;
-    margin: 0 auto 12px;
-    text-align: center;
-  }
-  .site-header h1 {
-    font-size: 1.9rem;
-    margin: 0 0 2px;
-    line-height: 1.25;
-    word-break: keep-all;      /* '개발'처럼 낱말 중간에서 끊기지 않게 */
-  }
-  .site-header .sub-title {
-    margin-bottom: 0;
-    font-size: .88rem;
-    line-height: 1.5;
-    word-break: keep-all;
-    padding: 0 6px;
-  }
-  @media (min-width: 721px) {
-    .site-header { margin-bottom: 18px; }
-    .site-header h1 { font-size: 2.8rem; }
-    .site-header .sub-title { font-size: 1rem; }
-  }
-
   /* 첫 화면에 '이번 주 할 일'이 스크롤 없이 보이도록 만든 히어로 카드 */
   .hero {
     max-width: 980px;
@@ -192,13 +167,7 @@
 </head>
 <body>
 
-<nav id="siteNav" data-page="index"></nav>
-
-<!-- ===== 사이트 제목 ===== -->
-<header class="site-header">
-  <h1>2026 응용 프로그래밍 개발</h1>
-  <p class="sub-title">Ren'Py를 활용한 비쥬얼 노벨 게임 제작 프로젝트</p>
-</header>
+<div id="siteTop" data-page="index"></div>
 
 <!-- ===== 이번 주 (첫 화면) ===== -->
 <section class="hero" aria-labelledby="heroTitle">
