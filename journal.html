@@ -397,10 +397,10 @@
 
 <script src="./assets/config.js"></script>
 <script>
-  // 🔴 구글 앱스 스크립트 웹 앱 배포 URL은 assets/config.js 의 GAS_URL 한 곳에서 관리합니다.
-  //     주소가 바뀌면 config.js 만 고치면 일지와 계약서가 함께 반영됩니다.
-  //     (config.js를 못 불러온 경우에도 페이지가 멈추지 않도록 대비합니다)
-  const GAS_WEB_APP_URL = (typeof GAS_URL !== "undefined") ? GAS_URL : "";
+  // 🔴 일지를 받는 주소는 assets/config.js 의 GAS_URL_JOURNAL 에서 관리합니다.
+  //     (계약서는 다른 스프레드시트로 가므로 주소가 따로입니다)
+  //     config.js를 못 불러온 경우에도 페이지가 멈추지 않도록 대비합니다.
+  const GAS_WEB_APP_URL = (typeof GAS_URL_JOURNAL !== "undefined") ? GAS_URL_JOURNAL : "";
 
   // 오늘 날짜 기본 지정 및 미래 날짜 입력 방지
   const dateInput = document.getElementById("date");
@@ -436,10 +436,10 @@
   document.getElementById("journalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    // 주소는 config.js 한 곳에서 옵니다. 여기에 특정 주소를 적어 두면
+    // 주소는 config.js 에서 옵니다. 여기에 특정 주소를 적어 두면
     // 그 주소를 쓰는 순간 제출이 통째로 막히므로, 비어 있는지만 확인합니다.
     if (!GAS_WEB_APP_URL) {
-      alert("Apps Script 배포 URL을 불러오지 못했습니다. assets/config.js 의 GAS_URL을 확인해 주세요!");
+      alert("Apps Script 배포 URL을 불러오지 못했습니다. assets/config.js 의 GAS_URL_JOURNAL을 확인해 주세요!");
       return;
     }
 

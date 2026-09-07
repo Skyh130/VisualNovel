@@ -300,7 +300,7 @@
 
   /* config.js를 못 불러오면(문법 오류·파일 없음) 아래 코드가 전부 멈춰
      빈 양식만 남습니다. 학생이 헛수고하지 않도록 눈에 띄게 알리고 제출을 막습니다. */
-  if (typeof SCOPE_LIMITS === "undefined" || typeof GAS_URL === "undefined") {
+  if (typeof SCOPE_LIMITS === "undefined" || typeof GAS_URL_CONTRACT === "undefined") {
     var warnBox = document.createElement("div");
     warnBox.className = "box box-warn";
     warnBox.setAttribute("role", "alert");
@@ -652,7 +652,7 @@
     statusMsg.textContent = "계약서를 차곡차곡 정리하고 있어요...";
 
     try {
-      var res = await fetch(GAS_URL, {
+      var res = await fetch(GAS_URL_CONTRACT, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },  // JSON으로 보내면 preflight로 실패합니다
         body: JSON.stringify(payload)

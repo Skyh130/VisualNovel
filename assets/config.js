@@ -5,15 +5,34 @@
    ========================================================= */
 
 /* ---------------------------------------------------------
-   1) 구글 앱스스크립트 배포 URL
-   - 일지(journal.html)와 계약서(contract.html)가 함께 사용합니다.
-   - 앱스스크립트를 '새 버전으로 배포'하면 URL이 바뀔 수 있습니다.
-     그때는 아래 주소만 새 주소로 바꿔주세요.
-   - ⚠️ 배포할 때 '액세스 권한: 모든 사용자'로 배포해야 합니다.
-        학교 도메인으로 제한하면 학생 전원이 제출에 실패합니다.
+   1) 구글 앱스스크립트 배포 URL — 두 개입니다
+
+   일지와 계약서는 서로 다른 구글 스프레드시트 파일에 저장됩니다.
+   그래서 받는 주소도 각각 따로입니다. 헷갈리지 않게 이름을 나눠 두었습니다.
+
+   - 앱스스크립트를 '새 버전으로 배포'하면 주소가 바뀝니다.
+     그때 바뀐 쪽 주소만 아래에서 고치면 됩니다.
+
+   ⚠️ 배포할 때 두 개 모두 '액세스 권한: 모든 사용자'여야 합니다.
+      학교 도메인으로 제한하면 학생 전원이 제출에 실패합니다.
+
+   ⚠️ 각 주소는 "한 줄만" 살아 있어야 합니다.
+      같은 이름이 두 줄이면 사이트 전체가 멈춥니다.
    --------------------------------------------------------- */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxxAqauAhgJv7Q1vG_lDP22zQ33KwpxfsGhqrmPZhk8xG6Nlw0Gjbdh1kvNM1J0QM6dVg/exec";
-//const GAS_URL = "https://script.google.com/macros/s/AKfycbxoTwrA9ZIojwOGRxn9kKehqLzpwTyUi_fzYadUNVYJbTiBbqkCVE0xkm7L9xiTRcZM/exec";
+
+// ┌────────────────────────────────────────────────────────────────┐
+// │ 📝 일지용 배포 URL                                              │
+// │    apps-script/일지_Code.gs 를 넣고 배포한 뒤,                   │
+// │    나온 주소를 아래 따옴표 " " 안에 붙여넣으세요.                 │
+// └────────────────────────────────────────────────────────────────┘
+const GAS_URL_JOURNAL  = "https://script.google.com/macros/s/AKfycbyUmxJmI9pb5CkEg2hRAsaLA4CjoM6bkqRcTvD1uXk9qB3sNF5XNMiRzUtjNUY-GmhRqg/exec";
+
+// ┌────────────────────────────────────────────────────────────────┐
+// │ 📋 계약서용 배포 URL                                            │
+// │    apps-script/계약서_Code.gs 를 넣고 배포한 뒤,                 │
+// │    나온 주소를 아래 따옴표 " " 안에 붙여넣으세요.                 │
+// └────────────────────────────────────────────────────────────────┘
+const GAS_URL_CONTRACT = "https://script.google.com/macros/s/AKfycbxxAqauAhgJv7Q1vG_lDP22zQ33KwpxfsGhqrmPZhk8xG6Nlw0Gjbdh1kvNM1J0QM6dVg/exec";
 
 
 /* ---------------------------------------------------------
