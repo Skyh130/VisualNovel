@@ -130,11 +130,6 @@
         <span>🐰 이름</span>
         <input type="text" id="studentName" placeholder="성명 입력" aria-label="학생 이름" required>
       </div>
-      <div class="info-input-wrap">
-        <span>🔑 반 암호</span>
-        <input type="text" id="classCode" placeholder="수업에서 안내" aria-label="반 암호"
-               autocomplete="off" autocapitalize="off" spellcheck="false" required>
-      </div>
     </div>
   </div>
 
@@ -577,17 +572,12 @@
     // 번호 · 이름
     var numEl = document.getElementById("studentNumber");
     var nameEl = document.getElementById("studentName");
-    var codeEl = document.getElementById("classCode");
     var numOk = numEl.value.trim() !== "" && Number(numEl.value) > 0;
     var nameOk = nameEl.value.trim() !== "";
-    // 암호가 맞는지는 서버(앱스스크립트)가 확인합니다. 여기서는 비었는지만 봅니다.
-    var codeOk = codeEl.value.trim() !== "";
     numEl.classList.toggle("is-error", !numOk);
     nameEl.classList.toggle("is-error", !nameOk);
-    codeEl.classList.toggle("is-error", !codeOk);
     mark(numOk, numEl);
     mark(nameOk, nameEl);
-    mark(codeOk, codeEl);
 
     mark(needText("title", "작품 제목을 적어주세요. 가제여도 괜찮습니다."), document.getElementById("title"));
     mark(needText("genre", "장르와 분위기를 적어주세요."), document.getElementById("genre"));
@@ -621,7 +611,7 @@
   }
 
   /* 번호·이름은 입력하면 빨간 표시를 바로 풀어줍니다 */
-  ["studentNumber", "studentName", "classCode"].forEach(function (id) {
+  ["studentNumber", "studentName"].forEach(function (id) {
     document.getElementById(id).addEventListener("input", function () { this.classList.remove("is-error"); });
   });
   document.getElementById("agreed").addEventListener("change", function () {
@@ -655,7 +645,6 @@
       type: "contract",
       studentNumber: document.getElementById("studentNumber").value.trim(),
       studentName:   document.getElementById("studentName").value.trim(),
-      classCode:     document.getElementById("classCode").value.trim(),
       title:      document.getElementById("title").value.trim(),
       genre:      document.getElementById("genre").value.trim(),
       logline:    document.getElementById("logline").value.trim(),
