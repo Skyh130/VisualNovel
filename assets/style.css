@@ -616,6 +616,59 @@ code.inline {
 .btn-copy:hover { background: #fff; }
 .btn-copy.copied { background: #d9f2dd; border-color: #79bd86; color: #1f5c2a; }
 
+/* ---------- 회차 수업 자료 (round10/round11 공통) ---------- */
+.flow { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 4px; }
+@media (min-width: 760px) { .flow { grid-template-columns: repeat(3, 1fr); } }
+.flow-step {
+  background: #fffbf7;
+  border: 2px solid var(--border-soft);
+  border-left: 6px solid var(--accent-dark);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+.flow-step b { display: block; color: var(--point-brown); margin-bottom: 2px; }
+.flow-step .t { font-size: .8rem; color: var(--text-muted); font-weight: 700; }
+.flow-step p { margin: 4px 0 0; font-size: .9rem; }
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px dashed var(--border-soft);
+}
+.step-no {
+  flex: 0 0 auto;
+  width: 34px; height: 34px; line-height: 34px;
+  text-align: center; border-radius: 50%;
+  background: linear-gradient(135deg, #6ba5dc, #4b89c7);
+  color: #fff; font-weight: 700;
+}
+.step-head h2 { border: none; padding: 0; margin: 0; font-size: 1.1rem; }
+
+ol.howto { margin: 0; padding-left: 22px; }
+ol.howto > li { margin-bottom: 12px; font-size: .95rem; }
+ol.howto .sub { font-size: .88rem; color: var(--text-muted); display: block; margin-top: 2px; }
+
+.check-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: #fffdf0;
+  border: 2px solid var(--pastel-yellow-border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.check-item input[type="checkbox"] {
+  flex: 0 0 auto; width: 26px; height: 26px; margin: 0;
+  accent-color: var(--accent-dark); cursor: pointer;
+}
+.check-item label { cursor: pointer; font-size: .93rem; line-height: 1.55; }
+.check-item label span { display: block; font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
+.check-item.done { opacity: .55; }
+.check-count { font-weight: 700; color: var(--point-brown); }
+.mini-note { font-size: .86rem; color: var(--text-muted); margin-top: 8px; }
+
 /* ---------- 자잘한 유틸 ---------- */
 .stack { display: flex; flex-direction: column; gap: 10px; }
 .row-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
