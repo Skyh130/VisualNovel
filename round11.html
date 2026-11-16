@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎉 11회차 — 최종 발표회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="./assets/style.css">
+<style>
+  /* 투표 칸 */
+  .vote-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 760px) { .vote-grid { grid-template-columns: repeat(3, 1fr); } }
+  .vote-card {
+    background: #fffbf7;
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .vote-card b { display: block; color: var(--point-brown); margin-bottom: 4px; }
+  .vote-card p { margin: 0; font-size: .9rem; }
+
+  /* 성찰문 질문 */
+  .reflect { counter-reset: q; list-style: none; padding: 0; margin: 0; }
+  .reflect li {
+    position: relative;
+    background: #fffdfa;
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 14px 14px 14px 48px;
+    margin-bottom: 10px;
+  }
+  .reflect li::before {
+    counter-increment: q;
+    content: counter(q);
+    position: absolute; left: 14px; top: 14px;
+    width: 24px; height: 24px; line-height: 24px;
+    text-align: center; border-radius: 50%;
+    background: var(--accent-ink); color: #fff;
+    font-size: .8rem; font-weight: 700;
+  }
+  .reflect b { display: block; color: #5c4634; margin-bottom: 4px; font-size: .97rem; }
+  .reflect span { font-size: .87rem; color: var(--text-muted); }
+
+  /* 발표 순서 카드 */
+  .talk {
+    background: #f0f7ff;
+    border: 2px solid var(--pastel-blue-border);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .talk ol { margin: 8px 0 0; padding-left: 20px; }
+  .talk li { margin-bottom: 6px; font-size: .93rem; }
+  .talk .sec { font-weight: 700; color: #285e94; }
+</style>
+</head>
+<body>
+
+<div id="siteTop" data-page=""></div>
+
+<div class="container">
+  <div class="header-wrap">
+    <h2 class="page-title">🎉 11회차 — 최종 발표회</h2>
+    <div class="sub-title">11월 24일 (화) · 11주 동안 만든 것을 서로에게 보여주는 날</div>
+  </div>
+
+  <div class="guidance">
+    <span class="badge-tag">💡 오늘의 원칙</span>
+    오늘은 <strong>고치는 날이 아니라 보여주는 날</strong>입니다. 코드는 열지 마세요.
+    덜 다듬어진 부분이 있어도 괜찮습니다. <strong>끝까지 돌아가는 작품을 만들어 낸 것</strong> 자체가 오늘의 성과입니다.
+  </div>
+
+  <div class="flow">
+    <div class="flow-step"><span class="t">처음 20분</span><b>부스 열기 · 패들렛 전시</b>
+      <p>작품을 띄워 두고 패들렛에 주소를 올립니다.</p></div>
+    <div class="flow-step"><span class="t">다음 70분</span><b>서로 플레이 · 투표</b>
+      <p>교대로 자리를 지키고 돌아다닙니다.</p></div>
+    <div class="flow-step"><span class="t">마지막 80분</span><b>대표 발표 · 회고 · 성찰문</b>
+      <p>2분 발표 후 성찰문을 씁니다.</p></div>
+  </div>
+
+  <!-- ===== 1 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">1</span><h2>부스 열기 — 시작 전 5분 점검</h2></div>
+    <ul style="padding-left:20px; margin:0;">
+      <li><strong>작품이 실제로 실행되는지</strong> 한 번 켜 봅니다. (웹 주소 또는 Windows 빌드)</li>
+      <li><strong>소리가 나오는지</strong> 확인하고, 이어폰이 있으면 준비합니다.</li>
+      <li>중간부터 보여줄 거면 <strong>세이브 파일이 그대로 있는지</strong> 확인합니다.</li>
+      <li>모니터에 <strong>타이틀 화면을 띄워 둡니다.</strong> 친구가 와서 바로 시작할 수 있게.</li>
+      <li>종이에 <strong>작품 제목과 번호·이름</strong>을 적어 모니터 옆에 둡니다.</li>
+    </ul>
+    <p class="note" style="margin-top:12px;">
+      ※ 지난주 빌드가 안 열리면 먼저 선생님께 말씀하세요. 발표 시간을 뒤로 미루고 복구를 도와드립니다.
+    </p>
+  </section>
+
+  <!-- ===== 2 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">2</span><h2>패들렛에 전시하기 <span class="pill">제출물</span></h2></div>
+
+    <p>지난주 Netlify에 올리고 적어둔 주소를 패들렛에 붙입니다. <strong>게임 파일이 아니라 주소만</strong> 올립니다.</p>
+
+    <div class="box box-green">
+      <span class="badge-tag tag-green">이렇게 적으세요</span>
+      <ul>
+        <li><strong>제목</strong> — 작품 제목 (번호·이름)</li>
+        <li><strong>한 줄 소개</strong> — 로그라인</li>
+        <li><strong>나의 질문</strong> — 계약서에 적었던 그 한 줄</li>
+        <li><strong>주소</strong> — Netlify 주소 (예: <code class="inline">dreamy-cat-1a2b3c.netlify.app</code>)</li>
+        <li>웹이 안 되면 <strong>Windows 빌드를 올린 공유 드라이브 링크</strong></li>
+      </ul>
+    </div>
+
+    <div class="row-wrap" style="margin-top:12px;">
+      <a class="btn-ghost" id="padletLink">패들렛 열기</a>
+      <a class="btn-ghost" href="./round10.html">📦 지난주 자료 (Netlify 올리는 법)</a>
+    </div>
+    <p class="mini-note">※ 주소를 잃어버렸다면 Netlify에 다시 올리면 됩니다. 지난주 자료 4번 단계를 그대로 따라하세요.</p>
+  </section>
+
+  <!-- ===== 3 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">3</span><h2>서로 플레이하고 투표하기</h2></div>
+
+    <p><strong>전반 35분 / 후반 35분</strong>으로 나눠 교대합니다. 자리를 지키는 동안에는 찾아온 친구에게 작품을 안내하고,
+    돌아다니는 동안에는 <strong>최소 4명</strong>의 작품을 플레이합니다.</p>
+
+    <h3>투표는 이렇게</h3>
+    <p class="note">순위를 매기는 것이 아닙니다. 아래 세 가지에 각각 <strong>한 명씩</strong> 골라 패들렛 댓글로 남깁니다.</p>
+
+    <div class="vote-grid">
+      <div class="vote-card"><b>🌟 질문이 좋았던 작품</b>
+        <p>'나의 질문'이 분명하고, 플레이하면서 그 질문이 느껴진 작품</p></div>
+      <div class="vote-card"><b>📖 이야기에 빠져든 작품</b>
+        <p>다음이 궁금해서 계속 클릭하게 된 작품</p></div>
+      <div class="vote-card"><b>🔁 다시 해보고 싶은 작품</b>
+        <p>다른 선택을 하면 어떻게 될지 궁금한 작품</p></div>
+    </div>
+
+    <div class="box box-yellow" style="margin-top:14px;">
+      <span class="badge-tag tag-yellow">감상을 남길 때</span>
+      <strong>좋았던 점을 먼저, 구체적으로</strong> 적습니다.
+      "재밌었다"보다 <strong>"두 번째 선택지에서 진짜 고민됐다"</strong>가 훨씬 큰 칭찬입니다.
+      고칠 점은 꼭 필요할 때만, 한 가지만 적습니다. 오늘은 고칠 수 없는 날이기 때문입니다.
+    </div>
+  </section>
+
+  <!-- ===== 4 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">4</span><h2>대표 발표 — 2분</h2></div>
+
+    <p>지난주에 정해 둔 <strong>2분 시연 경로</strong>를 그대로 보여주면 됩니다. 새로 준비하지 않아도 됩니다.</p>
+
+    <div class="talk">
+      <span class="sec">말하기 30초 + 시연 90초</span>
+      <ol>
+        <li><strong>작품 제목</strong>과 한 줄 소개</li>
+        <li><strong>나의 질문</strong> — "( A )와 ( B )가 충돌할 때…"</li>
+        <li><strong>가장 공들인 부분</strong> 한 가지</li>
+        <li>시연 — 정해둔 지점부터 선택지 하나를 거쳐 엔딩까지</li>
+      </ol>
+    </div>
+
+    <p class="note" style="margin-top:12px;">
+      ※ 긴장되면 <strong>나의 질문 한 줄만</strong>이라도 또렷하게 말하세요. 그게 작품의 핵심입니다.<br>
+      ※ 시연 중 오류가 나도 괜찮습니다. 어디서 났는지 설명할 수 있으면 그것도 실력입니다.
+    </p>
+  </section>
+
+  <!-- ===== 5 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">5</span><h2>회고와 성찰문 <span class="pill">제출물</span></h2></div>
+
+    <p>아래 여섯 가지에 답하면 성찰문이 됩니다. <strong>길게 쓸 필요 없습니다.</strong> 솔직하게 쓰는 것이 더 중요합니다.</p>
+
+    <ol class="reflect">
+      <li><b>내가 세운 '나의 질문'은 무엇이었나요?</b>
+        <span>완성된 작품이 그 질문에 답했나요? 답하지 못했다면 어디서 멀어졌나요?</span></li>
+      <li><b>범위를 줄인 적이 있나요?</b>
+        <span>무엇을 포기했고, 지금 돌아보니 그 결정은 옳았나요?</span></li>
+      <li><b>AI를 쓴 것 중 가장 도움이 된 것은?</b>
+        <span>반대로 'AI에게 맡기지 않길 잘했다'고 생각한 것은 무엇인가요?</span></li>
+      <li><b>코드에서 가장 오래 막힌 곳은 어디였나요?</b>
+        <span>어떻게 풀었나요? 그때 무엇을 배웠나요?</span></li>
+      <li><b>친구 작품에서 배운 것 한 가지</b>
+        <span>'나도 저렇게 해볼걸' 싶었던 것을 구체적으로 적어보세요.</span></li>
+      <li><b>11주를 다시 한다면 무엇을 다르게 할까요?</b>
+        <span>다음에 또 무언가를 만들 때 스스로에게 해줄 말입니다.</span></li>
+    </ol>
+
+    <div class="box box-peach" style="margin-top:14px;">
+      <span class="badge-tag tag-peach">💛 기억하세요</span>
+      범위를 줄인 것은 실패가 아닙니다. <strong>끝까지 돌아가는 작품을 만들어 낸 사람이 이 수업을 해낸 사람입니다.</strong>
+      5회차에 뼈대를 먼저 연결해 둔 덕분에 오늘 보여줄 것이 남아 있는 것입니다.
+    </div>
+  </section>
+
+  <!-- ===== 6 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">6</span><h2>작품 보관하기</h2></div>
+    <p>오늘이 마지막 수업입니다. 다음에 다시 열어볼 수 있게 정리해 두세요.</p>
+    <ul style="padding-left:20px; margin:0;">
+      <li><strong>프로젝트 폴더 전체</strong>를 공유 드라이브에 마지막으로 올립니다.</li>
+      <li><strong>Netlify 주소</strong>를 따로 적어 둡니다. (나중에 포트폴리오에 쓸 수 있습니다)</li>
+      <li>Windows 빌드 압축 파일도 함께 보관합니다.</li>
+      <li>크레딧 화면에 <strong>AI 활용 내역과 에셋 출처</strong>가 들어 있는지 마지막으로 확인합니다.</li>
+    </ul>
+  </section>
+
+  <!-- ===== 체크리스트 ===== -->
+  <section class="section">
+    <div class="step-head"><span class="step-no">✓</span><h2>오늘 끝내고 갈 것 <span class="check-count" id="checkCount"></span></h2></div>
+    <div id="checkList"></div>
+    <div class="row-wrap" style="margin-top:12px;">
+      <a class="btn-ghost" href="./journal.html">📝 AI 활용 일지 쓰러 가기</a>
+      <a class="btn-ghost" href="./contract.html">📋 내 계약서 다시 보기</a>
+      <button type="button" class="btn-ghost" id="resetCheck">↺ 체크 지우기</button>
+    </div>
+    <p class="mini-note" id="saveState"></p>
+  </section>
+
+  <div class="footer-note">11주 동안 수고 많았습니다. 🌸</div>
+</div>
+
+<script src="./assets/config.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* 패들렛 링크 — config.js의 LINKS.padletFinal이 비어 있으면 '준비 중' */
+  applyLinkButton(document.getElementById("padletLink"), LINKS.padletFinal, "🎨 패들렛 열기");
+
+  /* 오늘 끝내고 갈 것 */
+  var KEY = "vn_round11_check_v1";
+  var ITEMS = [
+    ["booth",   "부스를 열고 작품이 실행되는 것을 확인했다", "소리·세이브 파일까지."],
+    ["padlet",  "패들렛에 주소와 '나의 질문'을 올렸다", "게임 파일이 아니라 주소만."],
+    ["play",    "친구 작품을 최소 4개 플레이했다", "전반·후반 교대로."],
+    ["vote",    "투표 세 가지를 모두 남겼다", "질문 / 몰입 / 다시 해보고 싶은 작품."],
+    ["comment", "좋았던 점을 구체적으로 적어 주었다", "\"재밌었다\"보다 어느 장면이 왜 좋았는지."],
+    ["talk",    "2분 발표를 했다 (대표 발표인 경우)", "나의 질문을 또렷하게."],
+    ["reflect", "성찰문 여섯 가지에 답했다", "길이보다 솔직함."],
+    ["backup",  "프로젝트 폴더를 마지막으로 업로드했다", "다음에 다시 열어볼 수 있게."],
+    ["url",     "Netlify 주소를 따로 적어 두었다", "포트폴리오에 쓸 수 있습니다."],
+    ["journal", "AI 활용 일지를 제출했다", "마지막 일지입니다."]
+  ];
+
+  var host = document.getElementById("checkList");
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { saved = {}; }
+
+  ITEMS.forEach(function (it) {
+    var id = "chk_" + it[0];
+    var row = document.createElement("div");
+    row.className = "check-item";
+    row.innerHTML =
+      '<input type="checkbox" id="' + id + '" aria-label="' + it[1] + '">' +
+      '<label for="' + id + '">' + it[1] + '<span>' + it[2] + '</span></label>';
+    host.appendChild(row);
+    var box = row.querySelector("input");
+    box.checked = !!saved[it[0]];
+    row.classList.toggle("done", box.checked);
+    box.addEventListener("change", function () {
+      row.classList.toggle("done", box.checked);
+      save();
+    });
+  });
+
+  function save() {
+    var data = {};
+    ITEMS.forEach(function (it) { data[it[0]] = document.getElementById("chk_" + it[0]).checked; });
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+      document.getElementById("saveState").textContent = "✔ 체크한 내용은 이 컴퓨터에 저장됩니다.";
+    } catch (e) {
+      document.getElementById("saveState").textContent = "이 브라우저에서는 체크 상태가 저장되지 않습니다.";
+    }
+    count();
+  }
+
+  function count() {
+    var done = ITEMS.filter(function (it) { return document.getElementById("chk_" + it[0]).checked; }).length;
+    document.getElementById("checkCount").textContent = "(" + done + " / " + ITEMS.length + ")";
+  }
+
+  document.getElementById("resetCheck").addEventListener("click", function () {
+    if (!confirm("체크를 모두 지울까요?")) return;
+    ITEMS.forEach(function (it) {
+      var bx = document.getElementById("chk_" + it[0]);
+      bx.checked = false;
+      bx.closest(".check-item").classList.remove("done");
+    });
+    save();
+  });
+
+  count();
+})();
+</script>
+
+</body>
+</html>
